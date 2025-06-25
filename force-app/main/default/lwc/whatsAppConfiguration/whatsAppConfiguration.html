@@ -1,0 +1,110 @@
+<!--
+  @description       : 
+  @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+  @group             : 
+  @last modified on  : 12-24-2024
+  @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+-->
+<template>
+    <div class="container">
+        <div class="main-configuration-div">
+            <div class="configuration-box">
+                <div class="logo">
+                    <img src={WBConnectLogo} alt="">
+                </div>
+                <div class="field-container">
+                  
+                    <form action="">
+    
+                        <div class="row">
+                            <div class="col-25">
+                                <label for="lname">Access Token</label>
+                            </div>
+                            <div class="col-75">
+                                <input type="text" id="accesstoken" name="AccessToken" placeholder="Your Access Token.." value={accessToken} disabled={isDisabled} autocomplete="off" onchange={handleInput}>
+                            </div>
+                        </div>
+    
+                        <div class="row">
+                            <div class="col-25">
+                                <label for="lname">WhatsApp Business Account ID</label>
+                            </div>
+                            <div class="col-75">
+                                <input type="text" id="wbaccountid" name="WBAccountId" placeholder="Your WhatsApp Business Account ID.." value={wBAccountId} disabled={isDisabled} autocomplete="off" onchange={handleInput}>
+                            </div>
+                        </div>
+    
+                        <div class="row">
+                            <div class="col-25">
+                                <label for="lname">WhatsApp App Id</label>
+                            </div>
+                            <div class="col-75">
+                                <input type="text" id="appid" name="WBAppId" placeholder="Your WhatsApp App Id.." autocomplete="off" value={appId} disabled={isDisabled} onchange={handleInput}>
+                            </div>
+                        </div>
+    
+                        <div class="row">
+                            <div class="col-25">
+                                <label for="lname">Phone Number Id</label>
+                            </div>
+                            <div class="col-75">
+                                <input type="text" id="phoneid" name="PhoneNumberId" placeholder="Your Phone Number Id.." autocomplete="off" value={phoneNoId} disabled={isDisabled} onchange={handleInput}>
+                            </div>
+                        </div>
+    
+                    </form>
+    
+                </div>
+    
+                <template if:true={isEditing}>
+                    <div class="button-container">
+                        <lightning-button variant="brand-outline" class="slds-m-left_x-small" onclick={handleCancel} label="Cancel"></lightning-button>
+                        <lightning-button variant="brand" class="slds-m-left_x-small" onclick={handleSave} label="Save"></lightning-button>
+                    </div>
+                </template>
+                <template if:true={isFirstTime}>
+                    <lightning-button variant="brand" class="slds-m-left_x-small" onclick={handleSave} label="Save"></lightning-button>
+                </template>
+                <template if:false={isEditing}>
+                    <template if:false={isFirstTime}>
+                        <lightning-button variant="brand" class="slds-m-left_x-small" onclick={handleEdit} label="Edit"></lightning-button>
+                    </template>
+                </template>
+            </div>
+            <div class="resources-div">
+                <div class="nav-container">
+                    <div class="p-1">
+                        <div class="text-grow" id="button">
+                            <div class="card-container">
+                                <a target="_blank" class="buttonCSS buttonCSS-blue buttonCSS-bg-userguide card-redirect" href="https://mvclouds.com/wbconnect/user-guide/">
+                                  <h3>User Guide</h3>
+                                  <!-- <p class="small">Your quick reference for using WBConnect effectively!</p> -->
+                                  <div class="go-corner">
+                                    <div class="go-arrow">
+                                      <svg viewBox="-0.5 -0.5 16 16" fill="white" stroke-width="1" xmlns="http://www.w3.org/2000/svg" height="16" width="16"><path d="m2.8109125 13.021875000000001 10.3185875 -4.6015625c0.8273125000000001 -0.36893750000000003 0.8273125000000001 -1.4716874999999998 0 -1.840625L2.8109125 1.9781000000000002c-0.93489375 -0.41691875 -1.904625 0.5088625 -1.4415437500000001 1.37620625l1.97001875 3.68981875c0.15321875000000001 0.287 0.153225 0.62475 0 0.9117500000000001l-1.97001875 3.6898125c-0.463075 0.867375 0.50665 1.793125 1.4415437500000001 1.3761875000000001Z" ></path></svg>
+                                    </div>
+                                  </div>
+                                </a>
+                            </div>
+                            <!-- <a href="https://mvclouds.com/wbconnect/user-guide/" class="buttonCSS buttonCSS-blue buttonCSS-bg-userguide"><p>User Guide</p></a> -->
+                        </div>
+                    </div>
+                    <div class="p-1 disabled-nav-item">
+                        <div class="text-grow" id="button1">
+                            <div class="card-container">
+                                <a target="_blank" class="buttonCSS buttonCSS-blue buttonCSS-bg-faqs card-redirect" href="https://mvclouds.com/wbconnect/faqs/">
+                                  <h3>Frequently Asked Questions</h3>
+                                  <!-- <p class="small">Get quick answers to common questions about WBConnect!</p> -->
+                                  <div class="go-corner">
+                                      <svg class="go-arrow" viewBox="-0.5 -0.5 16 16" fill="white" stroke-width="1" xmlns="http://www.w3.org/2000/svg" height="16" width="16"><path d="m2.8109125 13.021875000000001 10.3185875 -4.6015625c0.8273125000000001 -0.36893750000000003 0.8273125000000001 -1.4716874999999998 0 -1.840625L2.8109125 1.9781000000000002c-0.93489375 -0.41691875 -1.904625 0.5088625 -1.4415437500000001 1.37620625l1.97001875 3.68981875c0.15321875000000001 0.287 0.153225 0.62475 0 0.9117500000000001l-1.97001875 3.6898125c-0.463075 0.867375 0.50665 1.793125 1.4415437500000001 1.3761875000000001Z" ></path></svg>
+                                  </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</template>

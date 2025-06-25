@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>WBConnect_Configuration</label>
+    <protected>false</protected>
+    <values>
+        <field>Access_Token__c</field>
+        <value xsi:type="xsd:string">EAAVUhq0jVsUBOZCkt9xOXCq4mUKfg5h8llZB9T5YxPfn4eiKZCRVQ8X7spld9ZA8a3OG8IE7uGg8abBdISiQuWbng3FXQLlR3TIZBggo6ZBJAi2ETG5FRvcdwS4mZAiYwvfBgEzXAMZBRKdqULwOiWWW54Wyz2ZBMIbZAYcy3CuD36sShJjevTzbyvmQbOUN3Dk3Y1owZDZD</value>
+    </values>
+    <values>
+        <field>Application_Id__c</field>
+        <value xsi:type="xsd:string">1500312290678469</value>
+    </values>
+    <values>
+        <field>Business_Account_Id__c</field>
+        <value xsi:type="xsd:string">499269473267232</value>
+    </values>
+    <values>
+        <field>Phone_Number_Id__c</field>
+        <value xsi:type="xsd:string">544633438726755</value>
+    </values>
+</CustomMetadata>

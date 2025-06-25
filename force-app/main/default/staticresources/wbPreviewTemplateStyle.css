@@ -1,0 +1,9 @@
+.slds-form-element .slds-input{
+    border:none;
+    box-shadow: 0 0px 0px 0 rgba(0, 0, 0, 0.2), 0 1px 8px 0 rgba(0, 0, 0, 0.18);
+}
+
+.slds-form-element .slds-combobox__input{
+    border:none;
+    box-shadow: 0 0px 0px 0 rgba(0, 0, 0, 0.2), 0 1px 8px 0 rgba(0, 0, 0, 0.18);
+} 

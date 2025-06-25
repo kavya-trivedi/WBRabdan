@@ -1,0 +1,291 @@
+<template>
+    <template if:false={showLicenseError}>
+        <div class="automation-container slds-box slds-theme_default">
+            <template if:true={isLoading}>
+                <lightning-spinner alternative-text="Loading..." size="medium"></lightning-spinner>
+            </template>
+    
+            <!-- Header Section -->
+            <div class="slds-p-horizontal_large slds-p-top_medium">
+                <h1 class="slds-p-vertical_small slds-p-horizontal_large slds-text-align_center slds-text-heading_medium header-background slds-text-color_inverse">
+                    {automation.name}
+                </h1>
+            </div>
+    
+            <!-- Template view section -->
+            <template if:false={isFlowTemplate}>
+                <lightning-layout class="slds-p-around_medium body-container">
+                    <!-- Template Buttons (Left Box) -->
+                    <lightning-layout-item size="12" medium-device-size="3" padding="around-small">
+                        <div class="slds-box content-box">
+                            <p class="slds-text-title slds-m-bottom_small">Template Buttons:</p>
+                            <lightning-layout vertical-align="stretch" multiple-rows="true">
+                                <template for:each={templateButtons} for:item="btn">
+                                    <lightning-layout-item key={btn.id} size="12" padding="vertical-small">
+                                        <button
+                                            class={btn.computedClass}
+                                            data-id={btn.id}
+                                            onclick={handleTemplateButtonClick}>
+                                            {btn.label}
+                                        </button>
+                                    </lightning-layout-item>
+                                </template>
+                            </lightning-layout>
+                        </div>
+                    </lightning-layout-item>
+    
+                    <!-- Action Section (Right Box) -->
+                    <lightning-layout-item size="12" medium-device-size="9" padding="around-small">
+                        <div class="slds-box content-box">
+                            <!-- Action Buttons -->
+                            <lightning-layout>
+                                <lightning-layout-item flexibility="grow">
+                                    <lightning-button-group>
+                                        <lightning-button label="Send WhatsApp Template" value="whatsapp" onclick={handleActionChange} variant={whatsappButtonVariant}></lightning-button>
+                                        <!-- <lightning-button label="Send Email Template" value="email" onclick={handleActionChange} variant={emailButtonVariant}></lightning-button> -->
+                                        <template if:true={isFlowTemplate}>
+                                            <div class="slds-p-around_medium">
+                                                <lightning-button label="Create Records" value="create" onclick={handleActionChange} variant={createButtonVariant}></lightning-button>
+                                            </div>
+                                        </template>
+                                    </lightning-button-group>
+                                </lightning-layout-item>
+                            </lightning-layout>
+    
+                            <!-- WhatsApp Search View -->
+                            <template if:true={isWhatsAppView}>
+                                <lightning-layout vertical-align="end" class="slds-m-top_medium">
+                                    <lightning-layout-item flexibility="grow">
+                                        <lightning-input
+                                            label="Search Template"
+                                            variant="label-hidden"
+                                            placeholder="Search Template"
+                                            type="search"
+                                            value={searchTerm}
+                                            onchange={handleSearchChange}>
+                                        </lightning-input>
+                                    </lightning-layout-item>
+                                </lightning-layout>
+    
+                                <div class="slds-m-top_small scrollable-list">
+                                    <template for:each={filteredWhatsAppTemplates} for:item="template">
+                                        <div key={template.Id}
+                                             class={template.computedClass}
+                                             data-id={template.Id}
+                                             onclick={handleTemplateSelect}>
+                                            {template.Name}
+                                        </div>
+                                    </template>
+                                    <template if:false={hasFilteredTemplates}>
+                                        <div class="slds-text-align_center slds-p-vertical_medium slds-text-color_weak">
+                                            No matching templates found.
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+    
+                            <!-- Email Search View -->
+                            <!-- <template if:true={isEmailView}>
+                                <lightning-layout vertical-align="end">
+                                    <lightning-layout-item flexibility="grow" padding="around-small">
+                                        <lightning-input
+                                            label="Search Template"
+                                            variant="label-hidden"
+                                            placeholder="Search Template"
+                                            type="search"
+                                            value={searchTerm}
+                                            onchange={handleSearchChange}>
+                                        </lightning-input>
+                                    </lightning-layout-item>
+                                </lightning-layout>
+    
+                                <div class="slds-m-top_small scrollable-list">
+                                    <template for:each={filteredWhatsAppTemplates} for:item="template">
+                                        <div key={template.Id}
+                                             class={template.computedClass}
+                                             data-id={template.Id}
+                                             onclick={handleTemplateSelect}>
+                                            {template.Name}
+                                        </div>
+                                    </template>
+                                    <template if:false={hasFilteredTemplates}>
+                                        <div class="slds-text-align_center slds-p-vertical_medium slds-text-color_weak">
+                                            No matching templates found.
+                                        </div>
+                                    </template>
+                                </div>
+                            </template> -->
+    
+                            <!-- Send Options
+                            <lightning-layout padding="around-small" class="slds-m-top_medium">
+                                <lightning-layout-item flexibility="grow">
+                                    <template if:false={isFlowTemplate}>
+                                        <lightning-button label="Send Immediately" value="immediate" onclick={handleSendOptionChange} variant={immediateButtonVariant} class="slds-m-right_small"></lightning-button>
+                                        <lightning-button label="Schedule Message" value="scheduled" onclick={handleSendOptionChange} variant={scheduleButtonVariant}></lightning-button>
+                                    </template>
+                                </lightning-layout-item>
+                            </lightning-layout>
+    
+                            Schedule Input Fields
+                            <template if:true={isScheduled}>
+                                <lightning-layout>
+                                    <lightning-layout-item size="2">
+                                        <lightning-input 
+                                            type="number" 
+                                            name="durationValue" 
+                                            value="1"
+                                            required 
+                                            label="Duration Value"
+                                            onchange={handleDurationValueChange}>
+                                        </lightning-input>
+                                    </lightning-layout-item>
+    
+                                    <lightning-layout-item size="2" class="slds-m-left_small">
+                                        <lightning-combobox
+                                            name="durationUnit"
+                                            label="Duration Unit"
+                                            value="Days"
+                                            required
+                                            options={durationUnits}
+                                            onchange={handleDurationUnitChange}>
+                                        </lightning-combobox>
+                                    </lightning-layout-item>
+                                </lightning-layout>
+                            </template> -->
+                        </div>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </template>
+    
+            <!-- Flow Template View -->
+            <template if:true={isFlowTemplate}>
+                <lightning-layout class="slds-p-around_medium body-container">
+                    <lightning-layout-item size="12">
+                        <div class="slds-box content-box">
+    
+                            <!-- Create Records Button -->
+                            <lightning-layout>
+                                <lightning-layout-item flexibility="grow">
+                                    <div class="slds-p-around_medium">
+                                        <h2 class="slds-text-heading_medium slds-text-align_center">Record Creation Mapping</h2>
+                                    </div>
+                                </lightning-layout-item>
+                            </lightning-layout>
+    
+                            <!-- Object Selection -->
+                            <div class="slds-text-align_left slds-p-around_medium">
+                                <lightning-combobox
+                                    name="Object"
+                                    label="Object"
+                                    value={selectedObject}
+                                    placeholder="Select Object"
+                                    options={allObjects}
+                                    onchange={handleObjectChange}>
+                                </lightning-combobox>
+                            </div>
+    
+                            <!-- Mapping Table -->
+                            <div class="slds-p-around_medium datatable">
+                                <table class="slds-table table-container">
+                                    <thead>
+                                        <tr class="tablerow">
+                                            <th class="tableHead" style="width: 40%;"><div class="slds-truncate">Object Field</div></th>
+                                            <th class="tableHead" style="width: 5%;"></th> <!-- Mapping Icon Header -->
+                                            <th class="tableHead" style="width: 40%;"><div class="slds-truncate">Flow Field</div></th>
+                                            <th class="tableHead" style="width: 5%;"></th> <!-- Delete Icon Column -->
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <template for:each={chatWindowRows} for:item="row">
+                                            <tr key={row.id} class="tablerow">
+                                                <!-- Object Field -->
+                                                <td class="tableData">
+                                                    <lightning-combobox
+                                                        variant="label-hidden"
+                                                        class="slds-size_full"
+                                                        data-row-id={row.id}
+                                                        value={row.selectedObjectField}
+                                                        options={objectFields}
+                                                        onchange={handleObjectFieldChange}
+                                                        placeholder="Select Object Field"
+                                                        disabled={row.isRequired}>
+                                                    </lightning-combobox>
+                                                </td>
+                            
+                                                <!-- Mapping Icon -->
+                                                <td class="tableData slds-text-align_center">
+                                                    <lightning-icon
+                                                        icon-name="utility:arrow_left"
+                                                        alternative-text="Maps to"
+                                                        size="x-small"
+                                                        class="slds-icon-text-default">
+                                                    </lightning-icon>
+                                                </td>
+                            
+                                                <!-- Flow Field -->
+                                                <td class="tableData">
+                                                    <lightning-combobox
+                                                        variant="label-hidden"
+                                                        class="slds-size_full"
+                                                        data-row-id={row.id}
+                                                        value={row.selectedFlowField}
+                                                        options={row.filteredFlowFields}
+                                                        onchange={handleObjectChangeForChat}
+                                                        placeholder="Select Flow Field">
+                                                    </lightning-combobox>
+                                                </td>
+                            
+                                                <!-- Delete Icon -->
+                                                <td class="tableData slds-text-align_center">
+                                                    <lightning-button-icon
+                                                        icon-name="utility:delete"
+                                                        alternative-text="Delete"
+                                                        title="Delete"
+                                                        onclick={handleDeleteRow}
+                                                        data-row-id={row.id}
+                                                        disabled={row.isRequired}>
+                                                    </lightning-button-icon>
+                                                </td>
+                                            </tr>
+                                        </template>
+                                    </tbody>                                
+                                </table>
+                            </div>
+                            <lightning-button 
+                                label="Add Row" 
+                                icon-name="utility:add" 
+                                onclick={addMappingRow} 
+                                class="slds-m-around_medium">
+                            </lightning-button>
+                        </div>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </template>
+    
+            <!-- Footer Buttons -->
+            <div class="slds-p-around_medium slds-text-align_center slds-m-top_medium">
+                <lightning-button
+                    label="Cancel"
+                    variant="neutral"
+                    onclick={handleCancel}
+                    class="slds-m-right_small">
+                </lightning-button>
+                <lightning-button
+                    label="Save"
+                    variant="brand"
+                    onclick={handleSave}>
+                </lightning-button>
+            </div>
+        </div>
+    </template>
+    <template if:true={showLicenseError}>
+        <div class="license-error">
+            <div class="popup-container">
+                <div class="popup-content">
+                    <h2>⚠️ License Expired</h2>
+                    <p>WBConnect license has expired. Please renew to continue using.</p>
+                </div>
+            </div>
+        </div>
+    </template>
+</template>

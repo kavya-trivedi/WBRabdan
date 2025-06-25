@@ -1,0 +1,146 @@
+<template>           
+    <template if:true={isCreateBroadcastComp}>
+        <div class="wrapper">
+
+            <!-- Spinner -->
+            <template if:true={isLoading}>
+                <div class="spinner-container">
+                    <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                </div>
+            </template>
+    
+            <div class="heading-container slds-grid slds-grid slds-grid_vertical-align-center slds-p-top_small">
+                <lightning-button label="Back" variant="brand" icon-position="left" icon-name="utility:chevronleft" onclick={handleBack}></lightning-button>
+                <h1 class="heading slds-grow">{broadcastHeading}</h1>
+                <lightning-button label={createBtnLabel} variant="brand" onclick={handleModalOpen} disabled={isBtnDisabled}></lightning-button>
+            </div>
+    
+            <div class="slds-m-around_medium container">
+    
+                <!-- Comboboxes in Grid -->
+                <div class="slds-grid slds-gutters comboboxdiv">
+                    <div class="slds-col">
+                        <lightning-combobox label="Select Object" value={selectedObject} options={objectOptions} onchange={handleObjectChange}></lightning-combobox>
+                    </div>
+    
+                    <div class="slds-col">
+                        <lightning-combobox label="Select List View" value={selectedListView} options={listViewOptions} onchange={handleListViewChange} disabled={isListViewDropdownDisabled}></lightning-combobox>
+                    </div>
+                </div>
+    
+                <div class="slds-m-top_medium">
+                    <lightning-input type="text" label="Search Records" placeholder="Seach record by Name or Phone..."  onchange={handleSearch} disabled={isSearchDisabled}></lightning-input>
+                </div>
+    
+                <!-- Custom Table -->
+                <template if:true={paginatedData.length}>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th class="checkbox-column">
+                                        <lightning-input type="checkbox" checked={isAllSelected} onchange={handleSelectAll} indeterminate={isIndeterminate}></lightning-input>
+                                    </th>
+                                    <th class="sr-no">Sr. No</th>
+                                    <th>Name</th>
+                                    <th>Phone</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={paginatedData} for:item="row">
+                                    <tr key={row.Id}>
+                                        <td>
+                                            <lightning-input type="checkbox" checked={row.isSelected} data-recordid={row.Id} onchange={handleRecordSelection}></lightning-input>
+                                        </td>
+                                        <td class="sr-no">{row.index}</td>
+                                        <td>{row.name}</td>
+                                        <td>{row.phone}</td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </template>
+    
+                <!-- No Records Message -->
+                <template if:true={showNoRecordsMessage}>
+                    <div class="no-records-message">
+                        <div class="empty-state">
+                            <div class="empty-state__content">
+                                <div class="empty-state__icon">
+                                    <img src="/resource/MVWB__emptyState" alt="" draggable="false">
+                                </div>
+                                <div class="empty-state__message">No data available to show</div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+    
+            </div>
+    
+            <template if:true={paginatedData.length}>
+                <div class="pagination-container">
+                    <button class="pagination-button" disabled={isFirstPage} onclick={handlePrevious}>
+                        <svg xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 520 520"
+                            fill="#fff">
+                            <path
+                                d="M342 477 134 272c-6-6-6-16 0-22L342 45c6-6 16-6 22 0l22 22c6 6 6 16 0 22L221 250c-6 6-6 16 0 22l163 161c6 6 6 16 0 22l-22 22c-5 5-14 5-20 0z" />
+                        </svg>
+                        Previous
+                    </button>
+            
+                    <template for:each={pageNumbers} for:item="page">
+                        <template if:false={page.isEllipsis}>
+                            <button key={page.number} data-id={page.number} class={page.className}
+                                onclick={handlePageChange}>
+                                {page.number}
+                            </button>
+                        </template>
+                        <template if:true={page.isEllipsis}>
+                            <span key={page.number} class="pagination-ellipsis">...</span>
+                        </template>
+                    </template>
+            
+                    <button class="pagination-button" disabled={isLastPage} onclick={handleNext}>
+                        Next
+                        <svg xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 520 520"
+                            fill="#fff">
+                            <path
+                                d="m179 44 207 205c6 6 6 16 0 22L179 476c-6 6-16 6-22 0l-22-22c-6-6-6-16 0-22l163-161c6-6 6-16 0-22L136 88c-6-6-6-16 0-22l22-22c6-5 15-5 21 0z" />
+                        </svg>
+                    </button>
+                </div>
+            </template>
+    
+
+    
+            <template if:true={isCreateBroadcastModalOpen}>
+                <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                    <div class="slds-modal__container">
+                        <div class="slds-modal__content slds-p-around_medium modal-content" id="modal-content-id-2">
+                            <div>
+                                <p class="modal-heading">Create Broadcast Group</p>
+                                <div class="modal-body">
+                                    <div class="modal-body-content">
+                                        <lightning-input placeholder="Enter Name Here" type="text" label="Name" name="name" onchange={handleInputChange} value={broadcastGroupName} class="slds-m-bottom_medium" required message-when-value-missing=" "></lightning-input>
+
+                                        <lightning-textarea name="message" label="Description" placeholder="Enter Descriptive Message Here" class="slds-m-bottom_medium" value={messageText} onchange={handleInputChange}></lightning-textarea>
+                                    </div>
+                                </div>
+                                <div class="footer">
+                                    <button class="save-btn" onclick={handleSave}>Save</button>
+                                    <button class="close-btn" onclick={closePopUp}>Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <div class="slds-backdrop slds-backdrop_open"></div>
+            </template>        
+        </div>
+    </template>
+
+    <template if:true={isAllBroadcastGroupPage}>
+        <c-wb-all-broadcast-group-page></c-wb-all-broadcast-group-page>
+    </template>
+</template>

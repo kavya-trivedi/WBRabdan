@@ -1,0 +1,130 @@
+<template>
+    <template if:true={showLicenseError}>
+        <div class="license-error">
+            <div class="popup-container">
+                <div class="popup-content">
+                    <h2>⚠️ License Expired</h2>
+                    <p>WBConnect license has expired. Please renew to continue using.</p>
+                </div>
+            </div>
+        </div>
+    </template>
+    <template if:false={showLicenseError}>
+        <template if:true={isAllGroupPage}>
+            <div class="wrapper">
+    
+                <!-- Spinner -->
+                <template if:true={isLoading}>
+                    <div class="spinner-container">
+                        <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                    </div>
+                </template>
+        
+                <h1 class="slds-text-align_center heading">Broadcast Groups</h1>
+        
+                <div class="slds-p-horizontal--medium filterparent">
+                    <div class="filterdiv">
+                        <lightning-input variant="label-hidden" class="filter search-div" name="searchInput" type="search" placeholder="Search by Name" onchange={handleSearch}></lightning-input>
+                    </div>
+                    <div class="btns">
+                        <button class="custom-button cus-btns" onclick={handleNewBroadcastCreation}>
+                            <lightning-icon icon-name="utility:add" alternative-text="Add" size="x-small" class="left-icon"></lightning-icon>
+                            <span>New Broadcast Group</span>
+                        </button>
+                    </div>
+                </div>
+        
+                <div class="container">
+                    <!-- Custom Table -->
+                    <template if:true={paginatedData.length}>
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th class="sr-no">No.</th>
+                                        <th>Group Name</th>
+                                        <th>Count of Members</th>
+                                        <th>Description</th>
+                                        <th>
+                                            <div class="slds-truncate">Actions</div>
+                                        </th>    
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template for:each={paginatedData} for:item="row">
+                                        <tr key={row.Id}>
+                                            <td class="sr-no">{row.index}</td>
+                                            <td>{row.Name}</td>
+                                            <td>{row.MVWB__Count_of_Members__c}</td>
+                                            <td>{row.MVWB__Description__c}</td>
+                                            <td class="tableData tablebtns" data-label="Actions">
+                                                <button class="action-buttons">
+                                                    <img src="/resource/MVWB__editIcon" class="action edit" alt="edit" data-id={row.Id} onclick={handleEditGroup} >
+                                                </button>
+                                                <button class="action-buttons">
+                                                    <img src="/resource/MVWB__trashIcon" class="action trash" alt="delete" data-id={row.Id} onclick={handleDeleteGroup}>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+                    </template>
+        
+                    <!-- No Records Message -->
+                    <template if:true={showNoRecordsMessage}>
+                        <div class="no-records-message">
+                            <div class="empty-state">
+                                <div class="empty-state__content">
+                                    <div class="empty-state__icon">
+                                        <img src="/resource/emptyState" alt="" draggable="false">
+                                    </div>
+                                    <div class="empty-state__message">No data available to show</div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+        
+                <template if:true={paginatedData.length}>
+                    <div class="pagination-container">
+                        <button class="pagination-button" disabled={isFirstPage} onclick={handlePrevious}>
+                            <svg xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 520 520"
+                                fill="#fff">
+                                <path d="M342 477 134 272c-6-6-6-16 0-22L342 45c6-6 16-6 22 0l22 22c6 6 6 16 0 22L221 250c-6 6-6 16 0 22l163 161c6 6 6 16 0 22l-22 22c-5 5-14 5-20 0z" />
+                            </svg>
+                            Previous
+                        </button>
+                
+                        <template for:each={pageNumbers} for:item="page">
+                            <template if:false={page.isEllipsis}>
+                                <button key={page.number} data-id={page.number} class={page.className}
+                                    onclick={handlePageChange}>
+                                    {page.number}
+                                </button>
+                            </template>
+                            <template if:true={page.isEllipsis}>
+                                <span key={page.number} class="pagination-ellipsis">...</span>
+                            </template>
+                        </template>
+                
+                        <button class="pagination-button" disabled={isLastPage} onclick={handleNext}>
+                            Next
+                            <svg xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 520 520"
+                                fill="#fff">
+                                <path d="m179 44 207 205c6 6 6 16 0 22L179 476c-6 6-16 6-22 0l-22-22c-6-6-6-16 0-22l163-161c6-6 6-16 0-22L136 88c-6-6-6-16 0-22l22-22c6-5 15-5 21 0z" />
+                            </svg>
+                        </button>
+                    </div>
+                </template>
+            </div>
+        </template>
+    
+    
+        <template if:true={isNewBroadcast}>
+            <c-broadcast-message-comp broadcast-group-id={broadcastGroupId} ></c-broadcast-message-comp>
+        </template>
+    </template>
+
+</template>

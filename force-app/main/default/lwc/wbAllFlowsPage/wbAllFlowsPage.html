@@ -1,0 +1,223 @@
+<template>
+
+    <template if:true={showLicenseError}>
+        <div class="license-error">
+            <div class="popup-container">
+                <div class="popup-content">
+                    <h2>⚠️ License Expired</h2>
+                    <p>WBConnect license has expired. Please renew to continue using.</p>
+                </div>
+            </div>
+        </div>
+    </template>
+    <template if:false={showLicenseError}>
+        <template if:true={isFlowVisible}>
+            <div class="slds-theme_default main">
+                <template if:true={isLoading}>
+                    <div class="spinner-overlay">
+                        <lightning-spinner alternative-text="Loading" size="large"></lightning-spinner>
+                    </div>
+                </template>
+                <div class="slds-grid slds-grid_vertical">
+                    <div class="heading">
+                        <p class="txt">WhatsApp Flows</p>
+                    </div>
+
+                        <!-- <div class="filterdiv">
+                            <lightning-input variant="label-hidden" class="filter search-div" type="search"
+                                placeholder="Search Name" onchange={handleSearchInputChange}></lightning-input>
+                            <lightning-combobox variant="label-hidden" class="filter" value={statusValues}
+                                placeholder="Status" options={statusOptions}
+                                onchange={handleStatusChange}></lightning-combobox>
+                        </div> -->
+
+
+                    <div class="filterparent">
+                        <div class="filterdiv">
+                            <div class="search-container">
+                                <div class="search-icon">
+                                    <lightning-icon icon-name="utility:search" size="x-small"></lightning-icon>
+                                </div>
+                                <input type="search" class="slds-input" name="searchInput" placeholder="Search Name"
+                                    onkeyup={handleSearchInputChange} />
+                            </div>
+
+                            <div class="custom-status-select">
+                                <select class="filter" value={statusValues} onchange={handleStatusChange}>
+                                    <option value="" disabled selected>Status</option>
+                                    <template for:each={statusOptions} for:item="opt">
+                                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                    </template>
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <div class="btns">
+                            <button class="custom-button cus-btns" onclick={showCreateFlow}>
+                                <lightning-icon icon-name="utility:add" alternative-text="Add" size="x-small"
+                                    class="left-icon"></lightning-icon>
+                                <span>Create Flow</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-m-around_medium table-container">
+
+                    <template if:true={paginatedData.length}>
+                        <table class="slds-table">
+                            <thead>
+                                <tr class="tablerow">
+                                    <th class="tableHead" scope="col">
+                                        <div class="slds-truncate">No.</div>
+                                    </th>
+                                    <th class="tableHead" scope="col">
+                                        <div class="slds-truncate">Flow Name</div>
+                                    </th>
+                                    <th class="tableHead" scope="col">
+                                        <div class="slds-truncate">Flow ID</div>
+                                    </th>
+                                    <th class="tableHead" scope="col">
+                                        <div class="slds-truncate">Status</div>
+                                    </th>
+                                    <th class="tableHead" scope="col">
+                                        <div class="slds-truncate">Last Updated</div>
+                                    </th>
+                                    <th class="tableHead" scope="col">
+                                        <div class="slds-truncate">Actions</div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={paginatedData} for:item="record">
+                                    <tr class="tablerow" key={record.id}>
+                                        <td class="tableData" data-label="Sr. No.">
+                                            <div class="slds-truncate">{record.serialNumber}</div>
+                                        </td>
+                                        <td class="tableData" data-label="Flow Name" title={record.MVWB__Flow_Name__c}>
+                                            <div class="truncate-name">{record.MVWB__Flow_Name__c}</div>
+                                        </td>
+                                        <td class="tableData" data-label="Flow ID">
+                                            <div class="slds-truncate">{record.MVWB__Flow_Id__c}</div>
+                                        </td>
+                                        <td class="tableData" data-label="Status">
+                                            <div class="slds-truncate">
+                                                <p class={record.MVWB__Status__c}>{record.MVWB__Status__c}</p>
+                                            </div>
+                                        </td>
+                                        <td class="tableData status" data-label="LastModifiedDate">
+                                            <div class="slds-truncate">{record.LastModifiedDate}</div>
+                                        </td>
+                                        <td class="tableData tablebtns" data-label="Actions">
+                                            <template if:false={record.isDeprecated}>
+                                                <button class="action-buttons">
+                                                    <img src="/resource/MVWB__previewIcon" class="action" title="preview"
+                                                        alt="preview" data-id={record.MVWB__Flow_Id__c}
+                                                        onclick={previewTemplate}>
+                                                </button>
+                                            </template>
+                                            <!-- <button disabled={record.isButtonDisabled} class="action-buttons slds-m-horizontal--x-small">
+                                                <img src="/resource/editIcon" class="action edit" alt="edit" data-id={record.id} onclick={editFlow} >
+                                            </button> -->
+                                            <button class="action-buttons">
+                                                <template if:true={record.isEditable}>
+                                                    <img src="/resource/MVWB__editIcon" class="action"
+                                                        title="Edit" alt="Edit" data-id={record.MVWB__Flow_Id__c}
+                                                        data-status={record.MVWB__Status__c} onclick={editFlow}>
+                                                </template>
+                                            </button>
+                                            <button class="action-buttons">
+                                                <template if:true={record.isPublished}>
+                                                    <img src="/resource/MVWB__trashIcon" class="action trash"
+                                                        title="Deprecate" alt="Deprecate" data-id={record.MVWB__Flow_Id__c}
+                                                        data-status={record.MVWB__Status__c} onclick={deprecateFlow}>
+                                                </template>
+                                                <template if:true={record.isDraft}>
+                                                    <img src="/resource/MVWB__trashIcon" class="action trash" title="Delete"
+                                                        alt="Delete" data-id={record.MVWB__Flow_Id__c}
+                                                        data-status={record.MVWB__Status__c} onclick={deleteFlow}>
+                                                </template>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+
+                        </table>
+                    </template>
+                    <template if:true={showNoRecordsMessage}>
+                        <div class="no-records-message">
+                            <div class="empty-state">
+                                <div class="empty-state__content">
+                                    <div class="empty-state__icon">
+                                        <img src="/resource/MVWB__emptyState" alt="" draggable="false">
+                                    </div>
+                                    <div class="empty-state__message">No data available to show</div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+                <template if:true={paginatedData.length}>
+                    <div class="pagination-container">
+                        <button class="pagination-button" disabled={isFirstPage} onclick={handlePrevious}>
+                            <svg xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 520 520"
+                                fill="#fff">
+                                <path
+                                    d="M342 477 134 272c-6-6-6-16 0-22L342 45c6-6 16-6 22 0l22 22c6 6 6 16 0 22L221 250c-6 6-6 16 0 22l163 161c6 6 6 16 0 22l-22 22c-5 5-14 5-20 0z" />
+                            </svg>
+                            Previous
+                        </button>
+
+                        <template for:each={pageNumbers} for:item="page">
+                            <template if:false={page.isEllipsis}>
+                                <button key={page.number} data-id={page.number} class={page.className}
+                                    onclick={handlePageChange}>
+                                    {page.number}
+                                </button>
+                            </template>
+                            <template if:true={page.isEllipsis}>
+                                <span key={page.number} class="pagination-ellipsis">...</span>
+                            </template>
+                        </template>
+
+                        <button class="pagination-button" disabled={isLastPage} onclick={handleNext}>
+                            Next
+                            <svg xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 520 520"
+                                fill="#fff">
+                                <path
+                                    d="m179 44 207 205c6 6 6 16 0 22L179 476c-6 6-16 6-22 0l-22-22c-6-6-6-16 0-22l163-161c6-6 6-16 0-22L136 88c-6-6-6-16 0-22l22-22c6-5 15-5 21 0z" />
+                            </svg>
+                        </button>
+                    </div>
+                </template>
+
+                <template if:true={showPopup}>
+                    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+                        aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                        <div class="slds-modal__container preview-container">
+                            <div class="slds-modal__content slds-p-around_medium flow-preview" id="modal-content-id-2">
+                                <p class="preview-heading">Flow Preview</p>
+                                <template if:true={isFlowDraft}>
+                                    <div class="slds-text-align--right slds-m-horizontal--medium slds-m-top--medium">
+                                        <button class="publish-btn" onclick={publishFlow}>Publish Flow</button>
+                                    </div>
+                                </template>
+                                <div class="previewContainer slds-m-top--medium">
+                                    <iframe class="flowIframe" src={flowPreviewURL} width="430" height="800"></iframe>
+                                </div>
+                                <div class="footer">
+                                    <button class="close-btn" onclick={closePopup}>Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <div class="slds-backdrop slds-backdrop_open" onclick={closePopup}></div>
+                </template>
+            </div>
+        </template>
+        <template if:true={iscreateflowvisible}>
+            <c-create-flow-management is-edit-mode={isEditMode} selected-flow-id={selectedFlowId}></c-create-flow-management>
+        </template>
+    </template>
+</template>

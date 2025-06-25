@@ -1,0 +1,327 @@
+<template>
+    <template if:true={showLicenseError}>
+            <div class="license-error">
+                <div class="popup-container">
+                    <div class="popup-content">
+                        <h2>⚠️ License Expired</h2>
+                        <p>WBConnect license has expired. Please renew to continue using.</p>
+                    </div>
+                </div>
+            </div>
+        </template>
+        <template if:false={showLicenseError}>
+        <template if:true={isTemplateVisible}>
+            <div class="wrapper">
+        
+                <!-- Spinner -->
+                <template if:true={isLoading}>
+                    <div class="spinner-container">
+                        <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                    </div>
+                </template>
+        
+                <template if:true={isEditTemplate}>
+                    <!-- <h2 class="slds-text-heading_medium">Edit Marketing Campaign</h2> -->
+                    <!-- <lightning-button variant="brand" label="Edit" onclick={handleOpenModal} class="slds-m-left_x-small" disabled={isSubmitDisabled}></lightning-button> -->
+                    <h1 class="slds-text-align_center heading">Edit Broadcasts Marketing</h1>
+        
+                </template>
+                <template if:false={isEditTemplate}>
+                    <!-- <h2 class="slds-text-heading_medium">Create Marketing Campaign</h2> -->
+                    <!-- <lightning-button variant="brand" label="Submit for Review" onclick={handleOpenModal} class="slds-m-left_x-small" disabled={isSubmitDisabled}></lightning-button> -->
+                    <h1 class="slds-text-align_center heading">Create Broadcasts Marketing</h1>
+        
+                </template>
+                <div class="content">
+                    <div class="broadCastGroup">
+                        <div style="width: 100%;">
+                            <h1>Selected Broadcast Group List</h1>
+                        </div>
+                    
+                        <div class="groupListWrapper">
+                            <template for:each={broadcastGroupList} for:item="group">
+                                <div key={group} class="slds-box slds-box_xx-small slds-text-align_center">
+                                    <p>{group}</p>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+            
+                    <!-- <div class="templateList">
+                        <lightning-combobox name="template" label="Select Template"
+                            options={templateOptions} onchange={handleInputChange} value={selectedTemplate}
+                            required message-when-value-missing=" " class="slds-m-bottom_medium">
+                        </lightning-combobox>
+                    </div> -->
+                    
+                    <div class="slds-grid slds-wrap">
+                        <!-- Left Column -->
+                        <div class="slds-col slds-size_1-of-2 slds-p-around_medium">
+                            <label class="slds-form-element__label">
+                                <abbr class="slds-required" title="required">*</abbr>
+                                How should this Whatsapp template marketing campaign start?
+                            </label>
+                            <div class="slds-form-element__control">
+                                <div class="slds-radio">
+                                    <input type="radio" name="startOption" id="specific" value="specific"
+                                           onchange={handleOptionChange} checked={isSpecific} />
+                                    <label class="slds-radio__label" for="specific">
+                                        <span class="slds-radio_faux"></span>
+                                        <span class="slds-form-element__label">Sending Whatsapp template on specific dates</span>
+                                    </label>
+                                </div>
+                                <div class="slds-radio">
+                                    <input type="radio" name="startOption" id="related" value="related"
+                                           onchange={handleOptionChange} checked={isRelated} />
+                                    <label class="slds-radio__label" for="related">
+                                        <span class="slds-radio_faux"></span>
+                                        <span class="slds-form-element__label">Using a {selectedObjectName} related date field</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                
+                        <!-- Right Column with lightning-combobox -->
+                        <div class="slds-col slds-size_1-of-2 slds-p-around_medium">
+                            <template if:true={isSpecific}>
+                                <lightning-input 
+                                    type="date" 
+                                    label="Select a date" 
+                                    value={selectedDate} 
+                                    onchange={handleDateChange}
+                                    class="slds-m-bottom_medium"
+                                    min={minDate}
+                                    required>
+                                </lightning-input>
+                                <!-- <template if:true={specificError}>
+                                    <div class="slds-text-color_error slds-m-top_xx-small">{specificError}</div>
+                                </template> -->
+                            </template>
+                            <template if:true={isRelated}>
+                                <lightning-combobox
+                                    name="dateField"
+                                    label="Select a date field"
+                                    value={selectedDateField}
+                                    placeholder="Select a date field"
+                                    options={dateFieldOptions}
+                                    onchange={handleSelectChange}
+                                    >
+                                </lightning-combobox>
+                                <template if:true={relatedError}>
+                                    <div class="slds-text-color_error slds-m-top_xx-small">{relatedError}</div>
+                                </template>
+                            </template>
+                        </div>
+                    </div>
+            
+                    <div class="allTemplates">
+                        <lightning-card>
+                            <div class="slds-p-horizontal_medium">
+                                <!-- Title Row with Add Button -->
+                                <div class="slds-grid slds-grid_align-spread slds-m-bottom_small slds-grid_vertical-align-start">
+                                    <h2 class="slds-text-heading_medium">WhatsApp Template</h2>
+                                    <lightning-button
+                                        variant="brand"
+                                        label="Add New Template"
+                                        onclick={addRow}>
+                                    </lightning-button>
+                                </div>
+                    
+                                <!-- Scrollable Email Config Rows -->
+                                <div class="scroll-container">
+                                    <template for:each={emailConfigs} for:item="config" for:index="index">
+                                        <div key={config.id} class="slds-grid slds-gutters slds-m-bottom_small">
+                                            <!-- Email Template -->
+                                            <div class="slds-col" style="flex: 2;">
+                                                <!-- <lightning-combobox
+                                                    name="whatsappTemplate"
+                                                    label="Whatsapp Template"
+                                                    value={config.template}
+                                                    placeholder="Select a template"
+                                                    options={templateOptions}
+                                                    data-index={index}
+                                                    onchange={handleComboboxChange}
+                                                    required>
+                                                </lightning-combobox> -->
+                                                <!-- <lightning-combobox name="whatsappTemplate" label="Whatsapp Template"
+                                                    options={templateOptions} onchange={handleInputChange} value={selectedTemplate}
+                                                    required message-when-value-missing=" " class="slds-m-bottom_medium">
+                                                </lightning-combobox> -->
+                                                <lightning-combobox 
+                                                    name="whatsappTemplate" 
+                                                    label="Whatsapp Template"
+                                                    value={config.template}
+                                                    placeholder="Select a template"
+                                                    options={templateOptions}
+                                                    data-index={index}
+                                                    onchange={handleComboboxChange} 
+                                                    required 
+                                                    message-when-value-missing=" " 
+                                                    class="slds-m-bottom_medium">
+                                                </lightning-combobox>
+                                            </div>
+                    
+                                            <!-- Days After Start -->
+                                            <div class="slds-col" style="flex: 1;">
+                                                <lightning-input
+                                                    type="number"
+                                                    label="Days After Start"
+                                                    value={config.daysAfter}
+                                                    data-index={index}
+                                                    data-field="daysAfter"
+                                                    onchange={handleInputChange}
+                                                    disabled={config.isImmediateSelected}
+                                                    required>
+                                                </lightning-input>
+                                                <template if:true={config.errorDaysAfter}>
+                                                    <div class="slds-text-color_error slds-m-top_xx-small">{config.errorDaysAfter}</div>
+                                                </template>
+                                            </div>
+                    
+                                            <!-- Time to Send -->
+                                            <div class="slds-col" style="flex: 1;">
+                                                <lightning-input
+                                                    type="time"
+                                                    label="Time to Send"
+                                                    value={config.timeToSend}
+                                                    data-index={index}
+                                                    data-field="timeToSend"
+                                                    onchange={handleInputChange}
+                                                    disabled={config.isImmediateSelected}
+                                                    required>
+                                                </lightning-input>
+                                                <template if:true={config.errorTimeToSend}>
+                                                    <div class="slds-text-color_error slds-m-top_xx-small">{config.errorTimeToSend}</div>
+                                                </template>
+                                            </div>
+                    
+                                            <!-- Immediate Checkbox -->
+                                            <!-- <div class="slds-col slds-align-bottom slds-grid slds-align_absolute-center" style="flex: 1;padding-top: 5px;">
+                                                <lightning-button-stateful
+                                                    label-when-off="Send Immediately"
+                                                    label-when-on="Immediate Send Enabled"
+                                                    label-when-hover="Schedule"
+                                                    icon-name-when-off="utility:add"
+                                                    icon-name-when-on="utility:check"
+                                                    icon-name-when-hover="utility:event"
+                                                    data-index={index}
+                                                    data-field="isImmediateSelected"
+                                                    selected={config.isImmediateSelected}
+                                                    onclick={handleInputChange}>
+                                                </lightning-button-stateful>
+                                            </div> -->
+                                            
+                                            <!-- Delete Button -->
+                                            <div class="slds-col slds-align-bottom slds-grid slds-align_absolute-center" style="flex: 0.3;">
+                                                <lightning-button-icon
+                                                    icon-name="utility:delete"
+                                                    alternative-text="Delete"
+                                                    title="Delete"
+                                                    data-index={index}
+                                                    onclick={handleDelete}>
+                                                </lightning-button-icon>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                    
+                                <!-- Error Message -->
+                                <template if:true={error}>
+                                    <p class="slds-text-color_error slds-m-top_small">{error}</p>
+                                </template>
+                            </div>
+                        </lightning-card>
+                    </div>
+                </div>
+        
+                        
+                <div class="slds-box slds-theme_default templatebtn">
+                    <lightning-button variant="brand-outline" onclick={handlePrevclick} label="Previous"
+                        class="slds-m-left_x-small"></lightning-button>
+                        <template if:true={isEditTemplate}>
+                            <!-- <h2 class="slds-text-heading_medium">Edit Marketing Campaign</h2> -->
+                            <lightning-button variant="brand" label="Edit" onclick={handleOpenModal} class="slds-m-left_x-small"></lightning-button>
+        
+                        </template>
+                        <template if:false={isEditTemplate}>
+                            <!-- <h2 class="slds-text-heading_medium">Create Marketing Campaign</h2> -->
+                            <lightning-button variant="brand" label="Submit for Review" onclick={handleOpenModal} class="slds-m-left_x-small"></lightning-button>
+        
+                        </template>
+                        
+                </div>
+        
+                <template if:true={createBrodcastPopup}>
+                    <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+                        <div class="slds-modal__container">
+                            <!-- Modal Header -->
+                            <header class="slds-modal__header modal-heading">
+                                <template if:true={isEditTemplate}>
+                                    <h2 class="slds-text-heading_medium">Edit Marketing Campaign</h2>
+                                </template>
+                                <template if:false={isEditTemplate}>
+                                    <h2 class="slds-text-heading_medium">Create Marketing Campaign</h2>
+        
+                                </template>
+                                <!-- <h2 class="slds-text-heading_medium">Create Marketing Campaign</h2> -->
+                                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={handleCloseModal}>
+                                    <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse"></lightning-icon>
+                                </button>
+                            </header>
+        
+                            <!-- Modal Body -->
+                            <div class="slds-modal__content modal-body">
+                                <!-- Input for Name -->
+                                <lightning-input 
+                                    type="text" 
+                                    label="Name" 
+                                    value={campaignName} 
+                                    onchange={handleInputChangeModal} 
+                                    name="campaignName" 
+                                    required 
+                                    class="slds-m-bottom_medium">
+                                </lightning-input>
+        
+                                <!-- Input for Description -->
+                                <lightning-textarea 
+                                    label="Description" 
+                                    value={campaignDescription} 
+                                    onchange={handleInputChangeModal} 
+                                    name="campaignDescription" 
+                                    required 
+                                    class="slds-m-bottom_medium">
+                                </lightning-textarea>
+        
+                                <!-- Checkbox for isMarketingCampaign -->
+                                <!-- <lightning-input 
+                                    type="checkbox" 
+                                    label="Is Marketing Campaign" 
+                                    checked={isMarketingCampaign} 
+                                    onchange={handleCheckboxChange} 
+                                    name="isMarketingCampaign" 
+                                    class="slds-m-bottom_medium">
+                                </lightning-input> -->
+        
+                                <footer class="slds-modal__footer footer">
+                                    <lightning-button 
+                                        variant="brand" 
+                                        label="Create" 
+                                        onclick={createCampaign}>
+                                    </lightning-button>
+        
+                                    <lightning-button 
+                                        variant="neutral" 
+                                        label="Cancel" 
+                                        onclick={handleCloseModal}>
+                                    </lightning-button>
+                                </footer>
+                            </div>
+        
+                        </div>
+                    </section>
+                    <div class="slds-backdrop slds-backdrop_open"></div>
+                </template>
+            </div>
+        </template>
+    </template>
+</template>

@@ -1,0 +1,97 @@
+.table{
+    padding: 2rem;
+}
+
+.datatable-failed{
+    --sds-c-icon-color-foreground-default: rgb(172, 170, 170);
+}
+
+.datatable-read{
+    --sds-c-icon-color-foreground-default: #31ae14;
+}
+.datatable-delivered{
+    --sds-c-icon-color-foreground-default: #003fa4;
+}
+
+.datatable-sent{
+    --sds-c-icon-color-foreground-default: #630079;
+}
+.custom-row-height .slds-table .slds-table_header-fixed .slds-table_bordered .slds-table_edit{
+    width: 100%;
+}
+.custom-row-height .slds-table tbody tr{
+    height: 50px; 
+    width: 100%;
+}
+.custom-row-height .slds-table tbody tr td lightning-primitive-cell-factory{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.custom-row-height .slds-table tbody tr th lightning-primitive-cell-factory{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.custom-row-height .slds-table thead tr th lightning-primitive-header-factory div{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+div .slds-table_header-fixed_container{
+    width: 100%;
+}
+/* .slds-table_header-fixed_container{
+    width: fit-content;
+} */
+
+/* .landiv {
+    position: relative;
+} */
+
+.landiv .slds-combobox__input {
+    border-radius: 5px;
+    padding: 0.11rem;
+    padding-left: 0.5rem;
+    border: 1px solid #8080808f;
+}
+
+/* .landiv .slds-button {
+    background-color: #0070d2; 
+    color: #fff;
+} */
+
+.landiv .slds-combobox__input {
+    border-radius: 5px;
+    padding: 0.11rem;
+    padding-left: 0.5rem;
+    border: 1px solid #8080808f;
+}
+.contentType .slds-combobox__input {
+    border-radius: 5px;
+    padding: 0.11rem;
+    padding-left: 0.5rem;
+    border: 1px solid #8080808f;
+}
+.typeaction .slds-combobox__input {
+    border-radius: 5px;
+    padding: 0.21rem;
+    padding-left: 0.5rem;
+    border: 1px solid rgb(193 193 193);
+}
+.urltype .slds-combobox__input {
+    border-radius: 5px;
+    padding: 0.21rem;
+    padding-left: 0.5rem;
+    border: 1px solid rgb(193 193 193);
+}
+.remove-icon .slds-button {
+    border: none !important;
+    box-shadow: none !important;
+}
+.remove-File .slds-button {
+    margin-top: 0.3rem;
+    transform: scale(1.2);
+    border: none !important;
+    box-shadow: none !important;
+}

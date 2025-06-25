@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Get_Pdf_Url</name>
+        <label>Get Pdf Url</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <actionName>SendDynamicReceiptTemplateInvoker</actionName>
+        <actionType>apex</actionType>
+        <connector>
+            <targetReference>success_screen</targetReference>
+        </connector>
+        <flowTransactionModel>Automatic</flowTransactionModel>
+        <inputParameters>
+            <name>jsonData</name>
+            <value>
+                <elementReference>JSONBody</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>recipientPhone</name>
+            <value>
+                <elementReference>Get_Payment.Account__r.Phone_No__c</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>recordId</name>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>SendDynamicReceiptTemplateInvoker</nameSegment>
+        <offset>0</offset>
+    </actionCalls>
+    <actionCalls>
+        <name>Send_WhatsApp_Template</name>
+        <label>Send WhatsApp Template</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <actionName>SendTemplateInvoker</actionName>
+        <actionType>apex</actionType>
+        <connector>
+            <targetReference>success_screen</targetReference>
+        </connector>
+        <flowTransactionModel>Automatic</flowTransactionModel>
+        <inputParameters>
+            <name>jsonData</name>
+            <value>
+                <elementReference>JSONBody</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>recipientPhone</name>
+            <value>
+                <elementReference>Get_Payment.Account__r.Phone_No__c</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>SendTemplateInvoker</nameSegment>
+        <offset>0</offset>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </actionCalls>
+    <apiVersion>64.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <assignments>
+        <name>Store_pdf_url</name>
+        <label>Store pdf url</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>PdfUrl</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Get_Payment.Receipt_Pdf_Url__c</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Send_WhatsApp_Template</targetReference>
+        </connector>
+    </assignments>
+    <customProperties>
+        <name>ScreenProgressIndicator</name>
+        <value>
+            <stringValue>{&quot;location&quot;:&quot;top&quot;,&quot;type&quot;:&quot;simple&quot;}</stringValue>
+        </value>
+    </customProperties>
+    <decisions>
+        <name>PDF_Url_Check</name>
+        <label>PDF Url Check</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>Get_Pdf_Url</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Not Present</defaultConnectorLabel>
+        <rules>
+            <name>Present</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Payment.Receipt_Pdf_Url__c</leftValueReference>
+                <operator>IsBlank</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Store_pdf_url</targetReference>
+            </connector>
+            <label>Present</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Phone_Field_Null</name>
+        <label>Phone Field Null</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnectorLabel>True</defaultConnectorLabel>
+        <rules>
+            <name>False</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Payment.Account__r.Phone_No__c</leftValueReference>
+                <operator>IsBlank</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Receipt_Sent_Once</targetReference>
+            </connector>
+            <label>False</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Receipt_Sent_Once</name>
+        <label>Receipt Sent Once</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>PDF_Url_Check</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>No</defaultConnectorLabel>
+        <rules>
+            <name>Yes</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Payment.Receipt_Sent__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Again_Screen</targetReference>
+            </connector>
+            <label>Yes</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Was_No_Clicked</name>
+        <label>Was No Clicked</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>PDF_Url_Check</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>not clicked</defaultConnectorLabel>
+        <rules>
+            <name>clicked</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Flow.CurrentStage</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <elementReference>Start</elementReference>
+                </rightValue>
+            </conditions>
+            <label>clicked</label>
+        </rules>
+    </decisions>
+    <environments>Default</environments>
+    <interviewLabel>Send Receipt by WA {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Send Receipt by WA</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>Flow</processType>
+    <recordLookups>
+        <name>Get_Payment</name>
+        <label>Get Payment</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Phone_Field_Null</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Payments__c</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <screens>
+        <name>Again_Screen</name>
+        <label>Again Screen</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <backButtonLabel>No</backButtonLabel>
+        <connector>
+            <targetReference>Was_No_Clicked</targetReference>
+        </connector>
+        <fields>
+            <name>again_header</name>
+            <fieldText>&lt;p&gt;The receipt has already been sent to this account previously. Send again?&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
+        </fields>
+        <nextOrFinishButtonLabel>Yes</nextOrFinishButtonLabel>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>success_screen</name>
+        <label>success screen</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <fields>
+            <name>screen_header</name>
+            <fieldText>&lt;p&gt;Message has been sent successfully.&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
+        </fields>
+        <nextOrFinishButtonLabel>Close</nextOrFinishButtonLabel>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <stages>
+        <name>End</name>
+        <isActive>false</isActive>
+        <label>End</label>
+        <stageOrder>2</stageOrder>
+    </stages>
+    <stages>
+        <name>Start</name>
+        <isActive>false</isActive>
+        <label>Start</label>
+        <stageOrder>1</stageOrder>
+    </stages>
+    <start>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_Payment</targetReference>
+        </connector>
+    </start>
+    <status>Obsolete</status>
+    <textTemplates>
+        <name>JSONBody</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>{
+    &quot;messaging_product&quot;: &quot;whatsapp&quot;,
+    &quot;recipient_type&quot;: &quot;individual&quot;,
+    &quot;to&quot;: &quot;{!Get_Payment.Account__r.Phone_No__c}&quot;,
+    &quot;type&quot;: &quot;template&quot;,
+    &quot;template&quot;: {
+        &quot;name&quot;: &quot;receipt_issued&quot;,
+        &quot;language&quot;: {
+            &quot;code&quot;: &quot;en&quot;
+        },
+        &quot;components&quot;: [
+            {
+                &quot;type&quot;: &quot;header&quot;,
+                &quot;parameters&quot;: [
+                    {
+                        &quot;type&quot;: &quot;document&quot;,
+                        &quot;document&quot;: {
+                        &quot;link&quot;: &quot;{!PdfUrl}&quot;
+                        }
+                    }
+                ]
+            },
+            {
+                &quot;type&quot;: &quot;body&quot;,
+                &quot;parameters&quot;: [
+                    {
+                        &quot;type&quot;: &quot;text&quot;,
+                        &quot;text&quot;: &quot;{!Get_Payment.Account__r.Name}&quot;
+                    }
+                ]
+            }
+        ]
+    }
+}</text>
+    </textTemplates>
+    <variables>
+        <name>PdfUrl</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>recordId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+    </variables>
+</Flow>

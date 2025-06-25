@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Send_Flow_Template</name>
+        <label>Send Flow Template</label>
+        <locationX>242</locationX>
+        <locationY>384</locationY>
+        <actionName>SendTemplateInvoker</actionName>
+        <actionType>apex</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>jsonData</name>
+            <value>
+                <elementReference>InProgressLeadFlowTemplate</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>recipientPhone</name>
+            <value>
+                <elementReference>$Record.Owner:User.Phone</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>SendTemplateInvoker</nameSegment>
+        <offset>0</offset>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </actionCalls>
+    <apiVersion>63.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <decisions>
+        <name>Is_Lead_In_Working</name>
+        <label>Is Lead In Working</label>
+        <locationX>374</locationX>
+        <locationY>276</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Yes_in_working</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>No_Answer</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Send_Flow_Template</targetReference>
+            </connector>
+            <label>Yes in working</label>
+        </rules>
+    </decisions>
+    <environments>Default</environments>
+    <interviewLabel>Send Flow Template For InProgress {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Send Flow Template For InProgress</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Substatus__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Not Reachable</stringValue>
+            </value>
+        </filters>
+        <object>Lead</object>
+        <recordTriggerType>Update</recordTriggerType>
+        <scheduledPaths>
+            <name>Check_if_lead_status_if_in_prospect</name>
+            <connector>
+                <targetReference>Is_Lead_In_Working</targetReference>
+            </connector>
+            <label>Check if lead status if in prospect</label>
+            <offsetNumber>96</offsetNumber>
+            <offsetUnit>Hours</offsetUnit>
+            <recordField>LastModifiedDate</recordField>
+            <timeSource>RecordField</timeSource>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Draft</status>
+    <textTemplates>
+        <name>InProgressLeadFlowTemplate</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>{
+    &quot;messaging_product&quot;: &quot;whatsapp&quot;,
+    &quot;recipient_type&quot;: &quot;individual&quot;,
+    &quot;to&quot;: &quot;{!$Record.Owner:User.Phone}&quot;,
+    &quot;type&quot;: &quot;template&quot;,
+    &quot;template&quot;: {
+        &quot;name&quot;: &quot;ask_for_inprogress_lead_update&quot;,
+        &quot;language&quot;: {
+            &quot;code&quot;: &quot;en&quot;
+        },
+        &quot;components&quot;: [
+            {
+                &quot;type&quot;: &quot;body&quot;,
+                &quot;parameters&quot;: [
+                    {
+                        &quot;type&quot;: &quot;text&quot;,
+                        &quot;text&quot;: &quot;{!$Record.Owner:User.FirstName} {!$Record.Owner:User.LastName}&quot;
+                    },
+                    {
+                        &quot;type&quot;: &quot;text&quot;,
+                        &quot;text&quot;: &quot;{!$Record.FirstName} {!$Record.LastName}&quot;
+                    }
+                ]
+            },
+            {
+                &quot;type&quot;: &quot;button&quot;,
+                &quot;sub_type&quot;: &quot;flow&quot;,
+                &quot;index&quot;: &quot;0&quot;,
+                &quot;parameters&quot;: [
+                    {
+                        &quot;type&quot;: &quot;payload&quot;,
+                        &quot;payload&quot;: &quot;PAYLOAD&quot;
+                    }
+                ]
+            }
+        ]
+    }
+}</text>
+    </textTemplates>
+</Flow>

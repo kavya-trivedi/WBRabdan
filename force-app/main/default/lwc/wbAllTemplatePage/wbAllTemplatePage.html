@@ -1,0 +1,210 @@
+<!--
+  @description       : 
+  @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+  @group             : 
+  @last modified on  : 04-06-2025
+  @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+-->
+<template>
+    <template if:false={showLicenseError}>
+
+    <template if:true={isTemplateVisible}>
+        <div class="slds-theme_default main">
+            <template if:true={isLoading}>
+                <div class="spinner-overlay">
+                    <lightning-spinner alternative-text="Loading" size="large"></lightning-spinner>
+                </div>
+            </template>
+            <div class="slds-grid slds-grid_vertical">
+                <div class="heading">
+                    <p class="txt">Message Template</p>
+                </div>
+                <div class="filterparent">
+                    <div class="filterdiv">
+                        <!-- <lightning-input variant="label-hidden" class="filter search-div" name="searchInput" type="search" placeholder="Search Name"
+                            onchange={handleChange}></lightning-input> -->
+                            <div class="search-container">
+                                <div class="search-icon">
+                                    <lightning-icon icon-name="utility:search" size="x-small"></lightning-icon>
+                                </div>
+                                <input type="search" class="slds-input" name="searchInput" placeholder="Search Name" onkeyup={handleChange} />
+                            </div>
+                        <div class="icon" onclick={toggleFilterVisibility}>
+                            <img src="/resource/MVWB__filterIcon" class="filteraction" alt="filter">
+                        </div>
+                        <div class={filterClass}>
+                            <div class="custom-select">
+                                <select name="category" class="filter filter-dropdown" value={categoryValue} onchange={handleChange}>
+                                    <template for:each={categoryOptions} for:item="option">
+                                        <option key={option.value} value={option.value} class="filter-option">{option.label}</option>
+                                    </template>
+                                </select>
+                            </div>
+                            <div class="custom-select">
+                                <select name="status" class="filter filter-dropdown" value={statusValues} onchange={handleChange}>
+                                    <template for:each={statusOptions} for:item="option">
+                                        <option key={option.value} value={option.value} class="filter-option">{option.label}</option>
+                                    </template>
+                                </select>
+                            </div>
+                            <div class="custom-select">
+                                <select name="timePeriod" class="filter filter-dropdown" value={timePeriodValue} onchange={handleChange}>
+                                    <template for:each={timePeriodOptions} for:item="option">
+                                        <option key={option.value} value={option.value} class="filter-option">{option.label}</option>
+                                    </template>
+                                </select>
+                            </div>                                
+                        </div>
+                    </div>
+                    <div class="btns">
+                        <button class={actionButtonClass} onclick={showCreateTemplate}>
+                            <lightning-icon icon-name="utility:add" alternative-text="Add" size="x-small" class="left-icon"></lightning-icon>
+                            <span>Create Template</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slds-m-around_medium table-container">
+                
+                <template if:true={paginatedData.length}>
+                    <table class="slds-table">
+                        <thead>
+                            <tr class="tablerow">
+                                <th class="tableHead" scope="col">
+                                    <div class="slds-truncate">No.</div>
+                                </th>
+                                <th class="tableHead" scope="col">
+                                    <div class="slds-truncate">Template Name</div>
+                                </th>
+                                <th class="tableHead" scope="col">
+                                    <div class="slds-truncate">Category</div>
+                                </th>
+                                <th class="tableHead" scope="col">
+                                    <div class="slds-truncate">Language</div>
+                                </th>
+                                <th class="tableHead" scope="col">
+                                    <div class="slds-truncate">Status</div>
+                                </th>
+                                <th class="tableHead" scope="col">
+                                    <div class="slds-truncate">Actions</div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={paginatedData} for:item="record">
+                                <tr class="tablerow" key={record.id}>
+                                    <td class="tableData" data-label="Sr. No.">
+                                        <div class="slds-truncate">{record.serialNumber}</div>
+                                    </td>
+                                    <td class="tableData" data-label="Template Name" title={record.MVWB__Template_Name__c}>
+                                        <div class="truncate-name">{record.MVWB__Template_Name__c}</div>
+                                    </td>
+                                    <td class="tableData" data-label="Category">
+                                        <div class="slds-truncate">{record.MVWB__Template_Category__c}</div>
+                                    </td>
+                                    <td class="tableData" data-label="Language">
+                                        <div class="slds-truncate">{record.LanguageLabel}</div>
+                                    </td>
+                                    <td class="tableData status" data-label="Status">
+                                        <div class="slds-truncate"><p class={record.MVWB__Status__c}>{record.MVWB__Status__c}</p></div>
+                                    </td>
+                                    <td class="tableData tablebtns" data-label="Actions">
+                                        <button class="action-buttons">
+                                            <img src="/resource/MVWB__previewIcon" class="action" alt="preview" data-id={record.id} onclick={previewTemplate}>
+                                        </button>
+                                        <button disabled={record.isButtonDisabled} class="action-buttons">
+                                            <img src="/resource/MVWB__editIcon" class={record.cssClass} alt="edit" data-id={record.id} onclick={editTemplate} >
+                                        </button>
+                                        <button class="action-buttons">
+                                            <img src="/resource/MVWB__trashIcon" class="action trash" alt="delete" data-id={record.id} onclick={deleteTemplate}>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </template>
+                            <!-- <template if:false={paginatedData.length}>
+                                <tr>
+                                    <td class="slds-text-align_center" colspan="6">
+                                        No records found.
+                                    </td>
+                                </tr>
+                            </template> -->
+                        </tbody>          
+                        
+                    </table>
+                </template>
+                <template if:true={showNoRecordsMessage}>
+                    <div class="no-records-message">
+                        <div class="empty-state">
+                            <div class="empty-state__content">
+                                <div class="empty-state__icon">
+                                    <img src="/resource/MVWB__emptyState" alt="" draggable="false">
+                                </div>
+                                <div class="empty-state__message">No data available to show</div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+            <template if:true={paginatedData.length}>
+                <div class="pagination-container">
+                    <button class="pagination-button" disabled={isFirstPage} onclick={handlePrevious}>
+                        <svg xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 520 520" fill="#fff">
+                            <path
+                                d="M342 477 134 272c-6-6-6-16 0-22L342 45c6-6 16-6 22 0l22 22c6 6 6 16 0 22L221 250c-6 6-6 16 0 22l163 161c6 6 6 16 0 22l-22 22c-5 5-14 5-20 0z" />
+                        </svg>
+                        Previous
+                    </button>
+    
+                    <template for:each={pageNumbers} for:item="page">
+                        <template if:false={page.isEllipsis}>
+                            <button key={page.number} data-id={page.number} class={page.className}
+                                onclick={handlePageChange}>
+                                {page.number}
+                            </button>
+                        </template>
+                        <template if:true={page.isEllipsis}>
+                            <span key={page.number} class="pagination-ellipsis">...</span>
+                        </template>
+                    </template>
+    
+                    <button class="pagination-button" disabled={isLastPage} onclick={handleNext}>
+                        Next
+                        <svg xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 520 520" fill="#fff">
+                            <path
+                                d="m179 44 207 205c6 6 6 16 0 22L179 476c-6 6-16 6-22 0l-22-22c-6-6-6-16 0-22l163-161c6-6 6-16 0-22L136 88c-6-6-6-16 0-22l22-22c6-5 15-5 21 0z" />
+                        </svg>
+                    </button>
+                </div>
+            </template>
+        </div>
+    </template>
+
+    <template if:true={isCreateTemplate}>
+        <c-wb-template-parent edittemplateid={editTemplateId}></c-wb-template-parent>
+    </template>
+    
+    <template if:true={showPopup}>
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container preview-container">
+                <div class="slds-modal__content slds-p-around_medium template-preview" id="modal-content-id-2">
+                    <c-wb-preview-template-page templateid={selectedTemplateId} onclosepopup={handlePopupClose}></c-wb-preview-template-page>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+    </template>
+
+    <template if:true={showLicenseError}>
+        <div class="license-error">
+            <div class="popup-container">
+                <div class="popup-content">
+                    <h2>⚠️ License Expired</h2>
+                    <p>WBConnect license has expired. Please renew to continue using.</p>
+                </div>
+            </div>
+        </div>
+    </template>
+</template>

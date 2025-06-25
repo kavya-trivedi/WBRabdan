@@ -1,0 +1,171 @@
+* {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    user-select: none;
+}
+
+.wrapper {
+    background-color: #ffffff;
+    padding-top: 1rem;
+    /* padding-bottom: 1rem; */
+    height: 100%;
+    width: 100%;
+    -ms-overflow-style: none;  /* IE and Edge */
+    overflow-x: hidden;
+    background-image: url('/resource/MVWB__wbiTemplateBg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-radius : 5px;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.wrapper::-webkit-scrollbar {
+    display: none; /* Hide scrollbar for Chrome, Safari and Opera */
+}
+
+.content{
+    flex-grow: 1;
+}
+
+.heading {
+    font-size: x-large;
+    font-weight: 500;
+}
+
+/* .allTemplates{
+    overflow: auto;
+    flex: 1;
+} */
+
+.broadCastGroup {
+    display: flex;
+    flex-direction: column;
+    margin: 1rem;
+    padding: 1rem;
+    border-radius: 5px;
+    background-color: transparent;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.broadCastGroup h1 {
+    font-weight: 500;
+    font-size: large;
+    margin-bottom: 1rem;
+    white-space: nowrap;
+}
+
+.groupListWrapper {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    width: 100%;
+    flex-wrap: nowrap; /* keep it in one row, scroll if overflow */
+    overflow-x: auto;  /* optional: allows horizontal scrolling on smaller screens */
+}
+
+.groupListWrapper .slds-box {
+    padding: 10px;
+    border-color: #0077B6;
+    color: #0077B6;
+    font-weight: bold;
+    border-radius: 6px;
+    text-align: center;
+}
+
+.templateList{
+    margin: 15px;
+}
+
+.allTemplates{
+    margin: 15px;
+    --slds-c-card-color-background  : transparent;
+    min-height: fit-content;
+    overflow: auto;
+}
+
+.templatebtn{
+    margin: 16px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    /* background-color: transparent; */
+    border: none;
+    position: sticky;
+    bottom: 0;
+    z-index: 3;
+}
+
+.modal-heading{
+    font-size: 20px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    font-weight: 500;
+    color: white;
+    padding: 10px;
+    background: #0077B6;
+}
+
+.modal-body{
+    overflow: hidden;
+    background-image: url('/resource/MVWB__wbiTemplateBg');
+    padding: 1rem 1rem 8px 1rem;
+}
+
+.footer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.5rem;
+    gap: 1rem;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    font-size: 14px;
+    padding: 1rem 1rem 8px 1rem;
+}
+
+
+/* Backdrop covers the entire component */
+.license-error {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8); /* Dark overlay */
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Centered popup */
+.popup-container {
+    background: #b71c1c; /* Dark red for warning */
+    color: white;
+    padding: 24px 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    max-width: 400px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Styling for title */
+.popup-content h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+/* Styling for message */
+.popup-content p {
+    font-size: 16px;
+    margin: 0;
+}

@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Copy_1_of_Send_Flow_Template</name>
+        <label>Copy 1 of Send Flow Template</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <actionName>SendTemplateInvoker</actionName>
+        <actionType>apex</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>jsonData</name>
+            <value>
+                <elementReference>JSONBody</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>recipientPhone</name>
+            <value>
+                <elementReference>$Record.Owner:User.Phone</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>relatedRecordId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>SendTemplateInvoker</nameSegment>
+        <offset>0</offset>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </actionCalls>
+    <actionCalls>
+        <name>Send_Flow_Template</name>
+        <label>Send Flow Template</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <actionName>SendTemplateInvoker</actionName>
+        <actionType>apex</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>jsonData</name>
+            <value>
+                <elementReference>JSONBody</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>recipientPhone</name>
+            <value>
+                <elementReference>$Record.Owner:User.Phone</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>relatedRecordId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>SendTemplateInvoker</nameSegment>
+        <offset>0</offset>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </actionCalls>
+    <apiVersion>64.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <decisions>
+        <name>Check_status</name>
+        <label>Check status</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Is_still_new_lead</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>New_Lead</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Send_Flow_Template</targetReference>
+            </connector>
+            <label>Is still new lead</label>
+        </rules>
+        <rules>
+            <name>Is_still_no_answer</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>No_Answer</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Copy_1_of_Send_Flow_Template</targetReference>
+            </connector>
+            <label>Is still no answer</label>
+        </rules>
+    </decisions>
+    <environments>Default</environments>
+    <formulas>
+        <name>ThreeDaysPrior</name>
+        <dataType>DateTime</dataType>
+        <expression>{!$Flow.CurrentDateTime} - 3</expression>
+    </formulas>
+    <interviewLabel>Send Flow for 36h without update {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Send Flow for 36h without update</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <filterLogic>or</filterLogic>
+        <filters>
+            <field>Status</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>New_Lead</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Status</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>No_Answer</stringValue>
+            </value>
+        </filters>
+        <object>Lead</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <scheduledPaths>
+            <name>X3_days_after_LastModifiedDate</name>
+            <connector>
+                <targetReference>Check_status</targetReference>
+            </connector>
+            <label>3 days after LastModifiedDate</label>
+            <offsetNumber>1</offsetNumber>
+            <offsetUnit>Minutes</offsetUnit>
+            <recordField>LastModifiedDate</recordField>
+            <timeSource>RecordField</timeSource>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <textTemplates>
+        <name>JSONBody</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>{
+    &quot;messaging_product&quot;: &quot;whatsapp&quot;,
+    &quot;recipient_type&quot;: &quot;individual&quot;,
+    &quot;to&quot;: &quot;{!$Record.Owner:User.Phone}&quot;,
+    &quot;type&quot;: &quot;template&quot;,
+    &quot;template&quot;: {
+        &quot;name&quot;: &quot;new_lead_3_days_status_update&quot;,
+        &quot;language&quot;: {
+            &quot;code&quot;: &quot;en&quot;
+        },
+        &quot;components&quot;: [
+            {
+                &quot;type&quot;: &quot;body&quot;,
+                &quot;parameters&quot;: [
+                    {
+                        &quot;type&quot;: &quot;text&quot;,
+                        &quot;text&quot;: &quot;{!$Record.Owner:User.FirstName} {!$Record.Owner:User.LastName}&quot;
+                    },
+                    {
+                        &quot;type&quot;: &quot;text&quot;,
+                        &quot;text&quot;: &quot;{!$Record.FirstName} {!$Record.LastName}&quot;
+                    }
+                ]
+            },
+            {
+                &quot;type&quot;: &quot;button&quot;,
+                &quot;sub_type&quot;: &quot;flow&quot;,
+                &quot;index&quot;: &quot;0&quot;,
+                &quot;parameters&quot;: [
+                    {
+                        &quot;type&quot;: &quot;payload&quot;,
+                        &quot;payload&quot;: &quot;PAYLOAD&quot;
+                    }
+                ]
+            }
+        ]
+    }
+}</text>
+    </textTemplates>
+</Flow>

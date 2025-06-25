@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Get_Pdf_Url</name>
+        <label>Get Pdf Url</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <actionName>OTPSendByWA</actionName>
+        <actionType>apex</actionType>
+        <connector>
+            <targetReference>Success_Screen</targetReference>
+        </connector>
+        <flowTransactionModel>Automatic</flowTransactionModel>
+        <inputParameters>
+            <name>jsonData</name>
+            <value>
+                <elementReference>JSONBody</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>recipientPhone</name>
+            <value>
+                <elementReference>Get_OTP.Account_Name__r.Phone_No__c</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>recordId</name>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>OTPSendByWA</nameSegment>
+        <offset>0</offset>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </actionCalls>
+    <actionCalls>
+        <name>Send_WhatsApp_Template</name>
+        <label>Send WhatsApp Template</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <actionName>SendTemplateInvoker</actionName>
+        <actionType>apex</actionType>
+        <connector>
+            <targetReference>Success_Screen</targetReference>
+        </connector>
+        <flowTransactionModel>Automatic</flowTransactionModel>
+        <inputParameters>
+            <name>jsonData</name>
+            <value>
+                <elementReference>JSONBody</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>recipientPhone</name>
+            <value>
+                <elementReference>Get_OTP.Account_Name__r.Phone_No__c</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>SendTemplateInvoker</nameSegment>
+        <offset>0</offset>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </actionCalls>
+    <apiVersion>64.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <assignments>
+        <name>Store_pdf_url</name>
+        <label>Store pdf url</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>PdfUrl</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Get_OTP.OTP_Pdf_Url__c</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Send_WhatsApp_Template</targetReference>
+        </connector>
+    </assignments>
+    <customProperties>
+        <name>ScreenProgressIndicator</name>
+        <value>
+            <stringValue>{&quot;location&quot;:&quot;top&quot;,&quot;type&quot;:&quot;simple&quot;}</stringValue>
+        </value>
+    </customProperties>
+    <decisions>
+        <name>PDF_Url_Check</name>
+        <label>PDF Url Check</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>Get_Pdf_Url</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Not Present</defaultConnectorLabel>
+        <rules>
+            <name>Present</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_OTP.OTP_Pdf_Url__c</leftValueReference>
+                <operator>IsBlank</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Store_pdf_url</targetReference>
+            </connector>
+            <label>Present</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Phone_Field_Null</name>
+        <label>Phone Field Null</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnectorLabel>True</defaultConnectorLabel>
+        <rules>
+            <name>False</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_OTP.Account_Name__r.Phone_No__c</leftValueReference>
+                <operator>IsBlank</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>PDF_Url_Check</targetReference>
+            </connector>
+            <label>False</label>
+        </rules>
+    </decisions>
+    <environments>Default</environments>
+    <interviewLabel>Send By WA {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Send By WA</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>Flow</processType>
+    <recordLookups>
+        <name>Get_OTP</name>
+        <label>Get OTP</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Phone_Field_Null</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Offer_to_Purchase__c</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <screens>
+        <name>Success_Screen</name>
+        <label>Success Screen</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <fields>
+            <name>screen_header</name>
+            <fieldText>&lt;p&gt;Message has been sent successfully.&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
+        </fields>
+        <nextOrFinishButtonLabel>Close</nextOrFinishButtonLabel>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <start>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_OTP</targetReference>
+        </connector>
+    </start>
+    <status>Active</status>
+    <textTemplates>
+        <name>JSONBody</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>{
+    &quot;messaging_product&quot;: &quot;whatsapp&quot;,
+    &quot;recipient_type&quot;: &quot;individual&quot;,
+    &quot;to&quot;: &quot;{!Get_OTP.Account_Name__r.Phone_No__c}&quot;,
+    &quot;type&quot;: &quot;template&quot;,
+    &quot;template&quot;: {
+        &quot;name&quot;: &quot;document_header_test&quot;,
+        &quot;language&quot;: {
+            &quot;code&quot;: &quot;en&quot;
+        },
+        &quot;components&quot;: [
+            {
+                &quot;type&quot;: &quot;header&quot;,
+                &quot;parameters&quot;: [
+                    {
+                        &quot;type&quot;: &quot;document&quot;,
+                        &quot;document&quot;: {
+                        &quot;link&quot;: &quot;{!PdfUrl}&quot;
+                        }
+                    }
+                ]
+            },
+            {
+                &quot;type&quot;: &quot;body&quot;,
+                &quot;parameters&quot;: [
+                    {
+                        &quot;type&quot;: &quot;text&quot;,
+                        &quot;text&quot;: &quot;{!Get_OTP.Account_Name__r.Name}&quot;
+                    },
+                    {
+                        &quot;type&quot;: &quot;text&quot;,
+                        &quot;text&quot;: &quot;{!Get_OTP.Project__c}&quot;
+                    },
+                    {
+                        &quot;type&quot;: &quot;text&quot;,
+                        &quot;text&quot;: &quot;{!Get_OTP.Unit__c}&quot;
+                    },
+                    {
+                        &quot;type&quot;: &quot;text&quot;,
+                        &quot;text&quot;: &quot;{!Get_OTP.Final_Sale_Value_Payment_Plan_Discount__c}&quot;
+                    }
+                ]
+            }
+        ]
+    }
+}</text>
+    </textTemplates>
+    <variables>
+        <name>PdfUrl</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>recordId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+    </variables>
+</Flow>

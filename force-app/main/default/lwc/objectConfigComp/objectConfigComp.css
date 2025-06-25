@@ -1,0 +1,208 @@
+* {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+th, td {
+    padding: 8px;
+}
+
+.objectSelect{
+    width: 20rem;
+}
+
+.main-container{
+    padding: 0;
+    height: 100%;
+    overflow: auto;
+    border-radius: 5px;
+    background-image: url('/resource/MVWB__wbiTemplateBg');
+    background-color: #ffffff;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.heading {
+    display: flex;
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.txt {
+    font-size: x-large;
+    font-weight: 500;
+}
+
+.selectedObject{
+    font-size: large;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+}
+
+.datatable {
+    border-radius: 8px;
+    background: transparent;
+}
+
+.slds-form-element__icon {
+    padding-top: unset !important;
+}
+
+.table-container {
+    border-radius: 0.4rem; 
+    overflow: visible !important; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+}
+
+.slds-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.slds-truncate{
+    display: flex;
+    justify-content: center;
+}
+
+table{
+    background: transparent;
+}
+
+tr{
+    border: none;
+}
+
+.tableHead {
+    background-color: #0077B6;
+    color: white;
+    padding: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.tablerow {
+    text-align: center !important;
+}
+
+.radio-stack .slds-radio {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.tableData {
+    height: 10%;
+    padding: 10px;
+    font-size: 15px;
+    max-width: 200px;
+    overflow: visible;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    border: none;
+}
+
+.truncate-name{
+    display: block;
+    max-width: 100%;
+    overflow: visible;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+tr:nth-child(odd) {
+    background-color: #CAF0F866;
+}
+
+tr:nth-child(even) {
+    background-color: white;
+}
+
+.slds-button{
+    background-color: #0077B6;
+    overflow: visible;
+}
+
+.alignCenter {
+    text-align: center;
+}
+
+
+/* Backdrop covers the entire component */
+.license-error {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8); /* Dark overlay */
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Centered popup */
+.popup-container {
+    background: #b71c1c; /* Dark red for warning */
+    color: white;
+    padding: 24px 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    max-width: 400px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Styling for title */
+.popup-content h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+/* Styling for message */
+.popup-content p {
+    font-size: 16px;
+    margin: 0;
+}
+
+.pop-up{
+    height: auto;
+    max-height: 74vh;
+    padding: 0;
+    border-radius: 5px;
+    overflow: hidden;
+    display: block;
+}
+
+.popUpBody {
+    height: 100%;
+    background-image: url('/resource/MVWB__wbiTemplateBg');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.pop-heading{
+    font-size: 20px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    font-weight: 500;
+    color: white;
+    padding: 0.4rem;
+    background: #0077B6;
+}
+
+.popUpFooter{
+    position: sticky;
+    bottom: 0;
+    padding-top: 1rem;
+}

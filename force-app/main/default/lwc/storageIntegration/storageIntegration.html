@@ -1,0 +1,97 @@
+<template>
+    <template if:false={showLicenseError}>
+        <div class="container">
+            <div class="main-configuration-div">
+                <div class="configuration-box">
+                    <div class="logo">
+                        <img src={AWS_logo} alt="AWSLOGO" class="aws-logo">
+                    </div>
+                    <template if:true={showNoData}>
+                        <div class="container">
+                            <img src={NoData} alt="No Data Available" class="no-data-image"/>
+                        </div>
+                        <lightning-button variant="brand" class="slds-m-left_x-small" onclick={handleNewClick} label="New"></lightning-button>
+                    </template>
+    
+                    <template if:false={showNoData}>
+                        <div class="field-container">
+                            <form action="">
+            
+                                <div class="row">
+                                    <div class="col-25">
+                                        <label for="lname">Access Key</label>
+                                    </div>
+                                    <div class="col-75">
+                                        <input type="text" id="accesskey" name="AccessKey" placeholder="Your Access Key.." value={accessKey} disabled={isDisabled} autocomplete="off" onchange={handleInput}>
+                                    </div>
+                                </div>
+    
+                                <div class="row">
+                                    <div class="col-25">
+                                        <label for="lname">Secret Access Key</label>
+                                    </div>
+                                    <div class="col-75">
+                                        <input type="text" id="secretaccesskey" name="SecretAccessKey" placeholder="Your Secret Access Key.." value={secretAccessKey} disabled={isDisabled} autocomplete="off" onchange={handleInput}>
+                                    </div>
+                                </div>
+            
+                                <div class="row">
+                                    <div class="col-25">
+                                        <label for="lname">S3 Bucket Name</label>
+                                    </div>
+                                    <div class="col-75">
+                                        <input type="text" id="s3bucketname" name="S3BucketName" placeholder="Your S3 Bucket Name.." value={s3BucketName} disabled={isDisabled} autocomplete="off" onchange={handleInput}>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-25">
+                                        <label for="lname">S3 Region Name</label>
+                                    </div>
+                                    <div class="col-75">
+                                        <input type="text" id="s3regionname" name="S3RegionName" placeholder="Your S3 Region Name.." value={s3RegionName} disabled={isDisabled} autocomplete="off" onchange={handleInput}>
+                                    </div>
+                                </div>
+
+                                <template if:false={isEditing}>
+                                    <div class="note-text">
+                                        <strong>Note:</strong> To enable AWS as the primary storage in Salesforce for WBConnect:<br>
+                                        Go to <b>Setup</b> → Search <b>Remote Site Settings</b> → Click <b>New Remote Site</b> → Set <b>Remote Site Name</b> as <code>"AWS_Bucket_URL"</code> and <b>Remote Site URL</b> as <code>"<u>https://{s3BucketName}.s3.amazonaws.com</u>"</code>. Ensure the <b>Active</b> checkbox is ticked and click Save.
+                                    </div>                                      
+                                </template>
+                            </form>
+                        </div>
+            
+                        <template if:true={isEditing}>
+                            <div class="button-container">
+                                <lightning-button variant="brand-outline" class="slds-m-left_x-small" onclick={handleCancel} label="Cancel"></lightning-button>
+                                <lightning-button variant="brand" class="slds-m-left_x-small" onclick={handleSave} label="Save"></lightning-button>
+                            </div>
+                        </template>
+                        <template if:true={isFirstTime}>
+                            <lightning-button variant="brand" class="slds-m-left_x-small" onclick={handleSave} label="Save"></lightning-button>
+                        </template>
+                        <template if:false={isEditing}>
+                            <template if:false={isFirstTime}>
+                                <div class="button-container">
+                                    <lightning-button variant="brand" class="slds-m-left_x-small" onclick={handleEdit} label="Edit"></lightning-button>
+                                    <lightning-button variant="brand-outline" class="slds-m-left_x-small" onclick={handleDeactivate} label="Deactivate"></lightning-button>
+                                </div>
+                            </template>
+                        </template>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </template>
+    <template if:true={showLicenseError}>
+        <div class="license-error">
+            <div class="popup-container">
+                <div class="popup-content">
+                    <h2>⚠️ License Expired</h2>
+                    <p>WBConnect license has expired. Please renew to continue using.</p>
+                </div>
+            </div>
+        </div>    
+    </template>
+</template>

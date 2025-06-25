@@ -1,0 +1,317 @@
+<template>
+    <template if:false={selectedRecordId}>
+        <template if:true={showLicenseError}>
+            <div class="license-error">
+                <div class="popup-container">
+                    <div class="popup-content">
+                        <h2>⚠️ License Expired</h2>
+                        <p>WBConnect license has expired. Please renew to continue using.</p>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <template if:false={showLicenseError}>
+            <template if:true={isTemplateVisible}>
+                <div class="wrapper">
+
+                    <!-- Spinner -->
+                    <template if:true={isLoading}>
+                        <div class="spinner-container">
+                            <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                        </div>
+                    </template>
+                    <template if:true={isBroadCastSelected}>
+                        <h1 class="slds-text-align_center heading">Recent Broadcasts</h1>
+                    </template>
+                    <!-- <template if:false={isBroadCastSelected}>
+                        <h1 class="slds-text-align_center heading">Recent Broadcasts Campaigns</h1>
+                    </template> -->
+
+                    <div class="filterparent">
+                        
+                        <div class="search-container">
+                            <div class="search-icon">
+                                <lightning-icon icon-name="utility:search" size="x-small"></lightning-icon>
+                            </div>
+                            <input type="search" class="slds-input" name="searchInput" placeholder="Search Name" value={broadcastSearchTerm}
+                                onkeyup={handleSearch} />
+                        </div>
+                        <div class="btns">
+                            <button class="custom-button" onclick={newBroadcast}>
+                                <span class="icon-container">
+                                    <svg focusable="false" aria-hidden="true" viewBox="0 0 520 520" part="icon"
+                                        lwc-3220386utb1 data-key="add"
+                                        class="slds-icon slds-icon-text-default slds-icon_x-small">
+                                        <g lwc-3220386utb1>
+                                            <path
+                                                d="M300 290h165c8 0 15-7 15-15v-30c0-8-7-15-15-15H300c-6 0-10-4-10-10V55c0-8-7-15-15-15h-30c-8 0-15 7-15 15v165c0 6-4 10-10 10H55c-8 0-15 7-15 15v30c0 8 7 15 15 15h165c6 0 10 4 10 10v165c0 8 7 15 15 15h30c8 0 15-7 15-15V300c0-6 4-10 10-10z"
+                                                lwc-3220386utb1></path>
+                                        </g>
+                                    </svg>
+                                </span>
+                                <span>New Broadcast</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="slds-m-around_medium container">
+                        <!-- Custom Table -->
+                        <template if:true={paginatedData.length}>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <template if:true={isBroadCastSelected}>
+                                            <th class="sr-no">No</th>
+                                            <th>Name</th>
+                                            <th>Recipient Count</th>
+                                            <th>Status</th>
+                                            <th>Total Sent</th>
+                                            <th>Total Delivered</th>
+                                            <th>Total Read</th>
+                                            <th>Total Failed</th>
+                                        </template>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template for:each={paginatedData} for:item="row">
+                                        <tr key={row.Id}>
+                                            <template if:true={isBroadCastSelected}>
+                                                <td class="sr-no">{row.index}</td>
+                                                <td>
+                                                    <a href="javascript:void(0);" class="clickable-name" data-record-id={row.Id} onclick={handleNameClick}>{row.Name}</a>
+                                                </td>
+                                                <td>{row.MVWB__Recipient_Count__c}</td>
+                                                <td>{row.MVWB__Status__c}</td>
+                                                <td>{row.MVWB__Total_Sent__c}</td>
+                                                <td>{row.MVWB__Total_Delivered__c}</td>
+                                                <td>{row.MVWB__Total_Read__c}</td>
+                                                <td>{row.MVWB__Total_Failed__c}</td>
+                                            </template>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </template>
+
+                        <!-- No Records Message -->
+                        <template if:true={showNoRecordsMessage}>
+                            <div class="no-records-message">
+                                <div class="empty-state">
+                                    <div class="empty-state__content">
+                                        <div class="empty-state__icon">
+                                            <img src="/resource/MVWB__emptyState" alt="" draggable="false">
+                                        </div>
+                                        <div class="empty-state__message">No data available to show</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+
+                    <template if:true={paginatedData.length}>
+                        <div class="pagination-container">
+                            <button class="pagination-button" disabled={isFirstPage} onclick={handlePrevious}>
+                                <svg xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 520 520" fill="#fff">
+                                    <path
+                                        d="M342 477 134 272c-6-6-6-16 0-22L342 45c6-6 16-6 22 0l22 22c6 6 6 16 0 22L221 250c-6 6-6 16 0 22l163 161c6 6 6 16 0 22l-22 22c-5 5-14 5-20 0z" />
+                                </svg>
+                                Previous
+                            </button>
+
+                            <template for:each={pageNumbers} for:item="page">
+                                <template if:false={page.isEllipsis}>
+                                    <button key={page.number} data-id={page.number} class={page.className}
+                                        onclick={handlePageChange}>
+                                        {page.number}
+                                    </button>
+                                </template>
+                                <template if:true={page.isEllipsis}>
+                                    <span key={page.number} class="pagination-ellipsis">...</span>
+                                </template>
+                            </template>
+
+                            <button class="pagination-button" disabled={isLastPage} onclick={handleNext}>
+                                Next
+                                <svg xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 520 520" fill="#fff">
+                                    <path
+                                        d="m179 44 207 205c6 6 6 16 0 22L179 476c-6 6-16 6-22 0l-22-22c-6-6-6-16 0-22l163-161c6-6 6-16 0-22L136 88c-6-6-6-16 0-22l22-22c6-5 15-5 21 0z" />
+                                </svg>
+                            </button>
+                        </div>
+                    </template>
+
+                    <template if:true={showPopup}>
+                        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+                            aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                            <div class="slds-modal__container" style="width: 100rem !important;">
+
+                                <!-- Close Button -->
+                                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+                                    title="Close" onclick={handleCloseOnPopup}>
+                                    <lightning-icon icon-name="utility:close" alternative-text="Close"
+                                        size="small"></lightning-icon>
+                                </button>
+
+                                <div class="slds-modal__content slds-p-around_medium pop-up" id="modal-content-id-2">
+                                    <div class="pop-heading">
+                                        {popupHeader}
+                                    </div>
+                                    <template if:true={popUpFirstPage}>
+                                        <div class="popUpBody slds-p-around--medium">
+                                            <!-- Header Section: Search and Create New Group Button -->
+                                            <div class="slds-m-bottom_medium">
+                                                <div class="slds-grid slds-gutters">
+                                                    <div class="slds-col slds-size_8-of-12">
+                                                        <lightning-input type="search" variant="label-hidden"
+                                                            placeholder="Search by Name..." onchange={handleSearchPopup} value={broadcastGroupSearchTerm}>
+                                                        </lightning-input>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Groups List -->
+                                            <div class="box-container">
+                                                <template if:true={filteredGroups.length}>
+                                                    <template for:each={filteredGroups} for:item="group">
+                                                        <div key={group.Id} class="">
+                                                            <div class="box-data">
+                                                                <div>
+                                                                    <lightning-input type="checkbox" label="Select"
+                                                                        variant="label-hidden" data-id={group.Id}
+                                                                        onchange={handleGroupSelection} checked={group.IsChecked}>
+                                                                    </lightning-input>
+                                                                </div>
+                                                                <div class="">
+                                                                    <h3 class="slds-text-heading_small">{group.Name}</h3>
+                                                                    <p><strong>Members:</strong> {group.MVWB__Count_of_Members__c}</p>
+                                                                    <p><strong>Object of Group Members: </strong>
+                                                                        {group.MVWB__Object_Name__c}</p>
+                                                                    <p><strong>Description:</strong> {group.MVWB__Description__c}</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </template>
+                                                </template>
+                                            </div>
+
+                                            <template if:true={filteredGroups.length}>
+                                                <div class="popUpFooter slds-text-align--center">
+                                                    <lightning-button variant="brand-outline" onclick={handleCloseOnPopup}
+                                                        label="Close" class="slds-m-left_x-small"></lightning-button>
+                                                    <lightning-button variant="brand" label="Next" onclick={handleNextOnPopup}
+                                                        class="slds-m-left_x-small" disabled={isNextDisabled}></lightning-button>
+                                                </div>
+                                            </template>
+
+                                            <template if:false={filteredGroups.length}>
+                                                <div class="empty-state__content">
+                                                    <div class="empty-state__icon">
+                                                        <img src="/resource/MVWB__emptyState" alt="" draggable="false">
+                                                    </div>
+                                                    <div class="empty-state__message">No data available to show</div>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </template>
+                                    <template if:true={popUpSecondpage}>
+                                        <div class="popUpBody flexBox slds-p-around--large">
+                                            <div class="selectTemplateDiv">
+                                                <lightning-combobox name="template" label="Select Template"
+                                                    options={templateOptions} onchange={handleInputChange} value={selectedTemplate}
+                                                    required message-when-value-missing=" " class="slds-m-bottom_medium">
+                                                </lightning-combobox>
+                                            </div>
+                                            <div class="templatePreviewDiv">
+                                                <template if:true={selectedTemplate}>
+                                                    <div class="previewOuterBox">
+                                                        <div class="previewInnerBox">
+                                                            <div class="slds-box slds-theme_default chatBoxBg">
+                                                                <template if:true={IsHeaderText}>
+                                                                    <div class="TextHeadingWP">
+                                                                        <lightning-formatted-rich-text value={tempHeader}></lightning-formatted-rich-text>
+                                                                    </div>
+                                                                </template>
+                                                                <template if:true={isImgSelected}>
+                                                                    <div>
+                                                                        <img src={tempHeader} alt="File Preview" style="max-width: 100%; height: auto;" />
+                                                                    </div>
+                                                                </template>
+                                                                <template if:true={isVidSelected}>
+                                                                    <div class="videoPreview">
+                                                                        <video width="100%" height="100%" controls>
+                                                                            <source src={tempHeader} type="video/mp4">
+                                                                            Your browser does not support the video tag.
+                                                                        </video>
+                                                                    </div>
+                                                                </template>
+                                                                <template if:true={isDocSelected}>
+                                                                    <div class="imagedivWP" style="position: relative;">
+                                                                        <img src={NoPreviewAvailableImg} alt="no preview available">
+                                                                    </div>
+                                                                </template>
+                                                                
+                                                                <div class="TextBodyWP">
+                                                                    <lightning-formatted-rich-text value={formatedTempBody}></lightning-formatted-rich-text>
+                                                                </div>
+                                                    
+                                                                <div class="textfooterWP">
+                                                                    <p class="pfooterWP">{tempFooter}</p>
+                                                                </div>
+                                                                <div class="TextTimeWP">
+                                                                    <p class="timefooterWP">11:59</p>
+                                                                </div>
+                                                            </div>
+                                                            <template if:true={buttonList}>
+                                                                <template for:each={buttonList} for:item="button" for:index="index">
+                                                                    <div key={button.id} class="button-label-preview">
+                                                                        <lightning-icon 
+                                                                        icon-name={button.iconName} 
+                                                                        size="x-small" 
+                                                                        class="button-icon">
+                                                                    </lightning-icon>                                    
+                                                                        <p>{button.btntext}</p>
+                                                                    </div>
+                                                                </template>
+                                                            </template>
+                                                        </div>
+                                                    </div> 
+                                                </template>
+                                                <template if:false={selectedTemplate}>
+                                                    <p class="noPreviewText">Please select a template to preview.</p>
+                                                </template>
+                                            </div>
+                                        </div>
+                                        <div class="popUpFooter slds-text-align--center slds-p-bottom--large">
+                                            <lightning-button variant="brand-outline" onclick={handlePreviousOnPopup}
+                                                label="Previous" class="slds-m-left_x-small"></lightning-button>
+                                            <lightning-button variant="brand" label="Send" onclick={handleSendOnPopup}
+                                                class="slds-m-left_x-small"></lightning-button>
+                                            <lightning-button variant="brand" label="Schedule" onclick={handleSchedulePopup}
+                                                class="slds-m-left_x-small"></lightning-button>
+                                        </div>
+                                    </template>
+                                    <template if:true={popUpLastPage}>
+                                        <div class="slds-grid slds-grid_vertical-align-center slds-grid_align-center slds-m-around_medium">
+                                            <lightning-input type="datetime-local" name="dateTime" value={selectedDateTime} onchange={handleInputChange} class="slds-align_absolute-center"></lightning-input>
+                                        </div>
+
+                                        <div class="popUpFooter slds-text-align_center slds-p-bottom_large">
+                                            <lightning-button variant="brand-outline" onclick={handlePreviousLastpage} label="Previous" class="slds-m-left_x-small"></lightning-button>
+                                            
+                                            <lightning-button variant="brand" label="Schedule and Send" onclick={handleSchedule} class="slds-m-left_x-small"></lightning-button>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </section>
+                        <div class="slds-backdrop slds-backdrop_open"></div>
+                    </template>
+                </div>
+            </template>
+        </template>
+    </template>
+    <template if:true={selectedRecordId}>
+        <c-broadcast-report-comp record-id={selectedRecordId}></c-broadcast-report-comp>
+    </template>
+</template>

@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Send_Follow_Up_Message</name>
+        <label>Send Follow Up Message</label>
+        <locationX>143</locationX>
+        <locationY>816</locationY>
+        <actionName>SendTemplateInvoker</actionName>
+        <actionType>apex</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>jsonData</name>
+            <value>
+                <elementReference>FollowUpTemplateToLead</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>recipientPhone</name>
+            <value>
+                <elementReference>Get_Related_Lead.Phone</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>templateId</name>
+            <value>
+                <elementReference>$Label.check_in_lead_follow_up</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>SendTemplateInvoker</nameSegment>
+        <offset>0</offset>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </actionCalls>
+    <apiVersion>63.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <decisions>
+        <name>Check_if_Lead_record_found</name>
+        <label>Check if Lead record found</label>
+        <locationX>275</locationX>
+        <locationY>708</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Lead_Found</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Related_Lead</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Send_Follow_Up_Message</targetReference>
+            </connector>
+            <label>Lead Found</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Is_Message_From_Agent_For_Follow_Up_Confirmation</name>
+        <label>Is Message From Agent For Follow-Up Confirmation?</label>
+        <locationX>473</locationX>
+        <locationY>492</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Yes</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Template_Chat_Which_Was_Answered.MVWB__Whatsapp_Template__r.MVWB__Template_Name__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>lead_follow_up</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.MVWB__Message__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Yes</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Get_Related_Lead</targetReference>
+            </connector>
+            <label>Yes</label>
+        </rules>
+    </decisions>
+    <description>Back to Phone field</description>
+    <environments>Default</environments>
+    <interviewLabel>Chat Create Follow Up Check {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Chat Create Follow Up Check</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <name>Get_Related_Lead</name>
+        <label>Get Related Lead</label>
+        <locationX>275</locationX>
+        <locationY>600</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Check_if_Lead_record_found</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Phone</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>Get_The_Related_Chat_Record.MVWB__Phone__c</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Lead</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <name>Get_Template_Chat_Which_Was_Answered</name>
+        <label>Get Template Chat Which Was Answered</label>
+        <locationX>473</locationX>
+        <locationY>276</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Get_The_Related_Chat_Record</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>MVWB__WhatsAppMessageId__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.MVWB__WhatsAppContextMessageID__c</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>MVWB__Chat__c</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <name>Get_The_Related_Chat_Record</name>
+        <label>Get The Related Chat Record</label>
+        <locationX>473</locationX>
+        <locationY>384</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Is_Message_From_Agent_For_Follow_Up_Confirmation</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>MVWB__WhatsAppMessageId__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>Get_Template_Chat_Which_Was_Answered.MVWB__WhatsAppContextMessageID__c</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>MVWB__Chat__c</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>MVWB__WhatsAppContextMessageID__c</field>
+            <operator>IsNull</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </filters>
+        <filters>
+            <field>MVWB__Type_of_Message__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Inbound Messages</stringValue>
+            </value>
+        </filters>
+        <object>MVWB__Chat__c</object>
+        <recordTriggerType>Create</recordTriggerType>
+        <scheduledPaths>
+            <name>Just_After_It_s_get_Created</name>
+            <connector>
+                <targetReference>Get_Template_Chat_Which_Was_Answered</targetReference>
+            </connector>
+            <label>Just After It&apos;s get Created</label>
+            <offsetNumber>0</offsetNumber>
+            <offsetUnit>Minutes</offsetUnit>
+            <recordField>CreatedDate</recordField>
+            <timeSource>RecordField</timeSource>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Obsolete</status>
+    <textTemplates>
+        <name>FollowUpTemplateToLead</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>{
+ &quot;messaging_product&quot;: &quot;whatsapp&quot;,
+ &quot;to&quot;: &quot;{!Get_Related_Lead.Phone}&quot;,
+ &quot;type&quot;: &quot;template&quot;,
+ &quot;template&quot;: {
+  &quot;name&quot;: &quot;check_in_lead_follow_up&quot;,
+  &quot;language&quot;: {
+   &quot;code&quot;: &quot;en&quot;
+  },
+  &quot;components&quot;: [
+   {
+    &quot;type&quot;: &quot;body&quot;,
+    &quot;parameters&quot;: [
+     {
+      &quot;type&quot;:&quot;text&quot;,
+      &quot;text&quot;:&quot;{!Get_Related_Lead.FirstName} {!Get_Related_Lead.LastName}&quot;
+     }
+    ]
+   }
+  ]
+ }
+}</text>
+    </textTemplates>
+</Flow>

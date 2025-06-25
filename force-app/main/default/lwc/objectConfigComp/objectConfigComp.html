@@ -1,0 +1,437 @@
+<template>
+    <template if:true={showLicenseError}>
+        <div class="license-error">
+            <div class="popup-container">
+                <div class="popup-content">
+                    <h2>⚠️ License Expired</h2>
+                    <p>WBConnect license has expired. Please renew to continue using.</p>
+                </div>
+            </div>
+        </div>
+    </template>
+    
+    <template if:false={showLicenseError}>
+        
+    <div class="main-container">
+        <div class="heading slds-grid slds-grid_align-spread">
+            <div class="slds-col"></div> 
+            <h1 class="slds-align_absolute-center txt">Object Configuration</h1>
+            <div class="slds-col slds-p-right--large">
+                Help &nbsp;
+                <lightning-helptext 
+                    content="Choose a Salesforce object and define default values for its required fields to allow WBConnect to automatically create a record for message details when an unknown WhatsApp number messages to your linked business number."
+                    class="slds-float_right"
+                ></lightning-helptext>
+            </div>
+        </div>
+
+        <template if:true={isLoading}>
+            <div class="spinner-overlay">
+                <lightning-spinner alternative-text="Loading" size="large"></lightning-spinner>
+            </div>
+        </template>
+
+        <!-- Accordion Component -->
+        <lightning-accordion allow-multiple-sections-open active-section-name={activeSectionName} onsectiontoggle={handleSectionToggle}>
+            <!-- Webhook Configuration Section -->
+            <lightning-accordion-section name="webhookConfig" label="Webhook Configuration">
+                <template if:false={isWebhookConfigEdit}>
+                    <div class="slds-m-left--medium slds-grid slds-grid_vertical-align-center slds-grid--align-spread">
+                        <div class="selectedObject">
+                            Selected Object : {selectedObject}
+                        </div>
+                        <div class="slds-m-around_medium slds-text-align--center">
+                            <lightning-button label="Edit Configuration" onclick={handleEdit} variant="brand"></lightning-button>
+                        </div>
+                    </div>
+        
+                    <div class="slds-p-around--medium datatable">
+                        <div class="table-container">
+                            <table class="slds-table">
+                                <thead>
+                                    <tr class="tablerow">
+                                        <th class="tableHead" scope="col">
+                                            <div class="slds-truncate">
+                                                Field API Name
+                                            </div>
+                                        </th>
+                                        <th class="tableHead" scope="col">
+                                            <div class="slds-truncate">
+                                                Field Type
+                                            </div>
+                                        </th>
+                                        <th class="tableHead" scope="col">
+                                            <div class="slds-truncate">
+                                                Default Value
+                                            </div>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template if:true={requiredFields.length}>
+                                        <template for:each={requiredFields} for:item="field">
+                                            <tr class="slds-table_bordered tablerow" key={field.apiName}>
+                                                <td class="tableData">
+                                                    <div class="slds-truncate">
+                                                        {field.apiName}
+                                                    </div>
+                                                </td>
+                                                <td class="tableData">
+                                                    <div class="slds-truncate">
+                                                        {field.type}
+                                                    </div>
+                                                </td>
+                                                <td class="tableData">
+                                                    <div class="slds-truncate">
+                                                        <template if:true={field.isReference}>
+                                                            {field.relatedRecordName}
+                                                        </template>
+                                                        <template if:false={field.isReference}>
+                                                            {field.value}
+                                                        </template>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </template>
+                                    </template>
+                                    <template if:false={requiredFields.length}>
+                                        <tr>
+                                            <td class="slds-text-align_center" colspan="3">
+                                                No Required fields for the selected object
+                                            </td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+        
+                    <div class="slds-p-around--medium datatable">
+                        <table class="slds-table table-container">
+                            <thead>
+                                <tr class="tablerow">
+                                    <th class="tableHead" scope="col">
+                                        <div class="slds-truncate">
+                                            Phone Field for Managing New WhatsApp Messages
+                                        </div>
+                                    </th>
+                                    <th class="tableHead" scope="col"></th>
+                                    <th class="tableHead" scope="col"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="slds-table_bordered tablerow">
+                                        <span>Selected Phone Field &nbsp;</span>
+                                        <lightning-helptext content="Selected Phone Field to Use for WBConnect for Receiving Incoming WhatsApp Messages"></lightning-helptext>
+                                    </td>
+                                    <td>
+                                        <template if:true={phoneFields}>
+                                            {selectedPhoneFieldLabel} ({selectedPhoneFieldVal})
+                                        </template>
+                                        <template if:false={phoneFields}>
+                                            <p>No Phone fields available for the selected object.</p>
+                                        </template>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </template>
+        
+                <template if:true={isWebhookConfigEdit}>
+                    <div class="slds-m-horizontal--medium objectSelect">
+                        <lightning-combobox label="Select Object" value={selectedObject} options={objectOptions} onchange={handleObjectChange}></lightning-combobox>
+                    </div>
+            
+                    <div class="slds-p-around--medium datatable">
+                        <div class="table-container">
+                            <table class="slds-table">
+                                <thead>
+                                    <tr class="tablerow">
+                                        <th class="tableHead" scope="col">
+                                            <div class="slds-truncate">
+                                                Field API Name
+                                            </div>
+                                        </th>
+                                        <th class="tableHead" scope="col">
+                                            <div class="slds-truncate">
+                                                Field Type
+                                            </div>
+                                        </th>
+                                        <th class="tableHead" scope="col">
+                                            <div class="slds-truncate">
+                                                Default Value
+                                            </div>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template if:true={requiredFields.length}>
+                                        <template for:each={requiredFields} for:item="field">
+                                            <tr class="slds-table_bordered tablerow" key={field.apiName}>
+                                                <td class="tableData">
+                                                    <div class="slds-truncate">
+                                                        {field.apiName}
+                                                    </div>
+                                                </td>
+                                                <td class="tableData">
+                                                    <div class="slds-truncate">
+                                                        {field.type}
+                                                    </div>
+                                                </td>
+                                                <td class="tableData">
+                                                    <template if:true={field.isString}>
+                                                        <lightning-input variant="label-hidden" type="text" data-field={field.apiName} value={field.value} onchange={handleInputChange}></lightning-input>
+                                                    </template>
+                    
+                                                    <template if:true={field.isNumber}>
+                                                        <lightning-input variant="label-hidden" type="number" data-field={field.apiName} value={field.value} onchange={handleInputChange}></lightning-input>
+                                                    </template>
+        
+                                                    <template if:true={field.isDate}>
+                                                        <lightning-input variant="label-hidden" type="date" data-field={field.apiName} value={field.value} onchange={handleInputChange}></lightning-input>
+                                                    </template>
+        
+                                                    <template if:true={field.isDateTime}>
+                                                        <lightning-input variant="label-hidden" type="datetime" data-field={field.apiName} value={field.value} onchange={handleInputChange}></lightning-input>
+                                                    </template>
+                    
+                                                    <template if:true={field.isReference}>
+                                                        <lightning-record-picker label="Search records" variant="label-hidden" placeholder="Search records here..." object-api-name={field.relatedObject} 
+                                                                        value={field.value} data-field={field.apiName} onchange={handleRecordSelection}></lightning-record-picker>
+                                                    </template>
+                    
+                                                    <template if:true={field.isTextArea}>
+                                                        <lightning-textarea variant="label-hidden" data-field={field.apiName} value={field.value} onchange={handleInputChange}></lightning-textarea>
+                                                    </template>
+                    
+                                                    <template if:true={field.isPicklist}>
+                                                        <lightning-combobox variant="label-hidden" data-field={field.apiName} value={field.value} options={field.picklistValues} onchange={handleInputChange}></lightning-combobox>
+                                                    </template>
+                    
+                                                    <template if:true={field.isBoolean}>
+                                                        <lightning-input variant="label-hidden" type="checkbox" checked={field.value} data-field={field.apiName} onchange={handleCheckboxChange}></lightning-input>
+                                                    </template>
+                                                </td>
+                                            </tr>
+                                        </template>
+                                    </template>
+                                    <template if:false={requiredFields.length}>
+                                        <tr>
+                                            <td class="slds-text-align_center" colspan="3">
+                                                No Required fields for the selected object
+                                            </td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+        
+                    <div class="slds-p-around--medium datatable">
+                        <table class="slds-table table-container">
+                            <thead>
+                                <tr class="tablerow">
+                                    <th class="tableHead" scope="col">
+                                        <div class="slds-truncate">
+                                            Phone Fields Available for Selection
+                                        </div>
+                                    </th>
+                                    <th class="tableHead" scope="col"></th>
+                                    <th class="tableHead" scope="col"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="slds-table_bordered tablerow">
+                                        <span>Select Phone Field &nbsp;</span>
+                                        <lightning-helptext content="Select Phone Field to Use for WBConnect for Receiving Incoming Messages"></lightning-helptext>
+                                    </td>
+                                    <td>
+                                        <template if:true={phoneFields}>
+                                            <div class="slds-form-element">
+                                                <div class="slds-form-element__control radio-stack">
+                                                    <template for:each={phoneFields} for:item="field">
+                                                        <div key={field.value} class="slds-radio">
+                                                            <input type="radio" id={field.value} name="phoneField" value={field.value} checked={field.isSelected} onchange={handleSelectionChange}/>
+                                                            <label class="slds-radio__label" for={field.value}>
+                                                                <span class="slds-radio_faux"></span>
+                                                                <span class="slds-form-element__label"> &nbsp; {field.label} ({field.value})</span>
+                                                            </label>
+                                                        </div>
+                                                    </template>
+                                                </div>
+                                            </div>
+                                        </template>
+                                        <template if:false={phoneFields}>
+                                            <p>No Phone fields available for the selected object.</p>
+                                        </template>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="slds-m-around_medium slds-text-align--center button-container">
+                        <lightning-button variant="brand-outline" class="slds-m-right_small" onclick={handleCancel} label="Cancel"></lightning-button>
+                        <lightning-button variant="brand" class="slds-m-left_small" onclick={handleSave} label="Save Configuration"></lightning-button>
+                    </div>
+                </template>
+            </lightning-accordion-section>
+
+            <!-- Chat Window Configuration Section -->
+            <lightning-accordion-section name="chatWindowConfig" label="Chat Window Configuration">
+                <template if:false={isChatWindowConfigEdit}>
+                    <div class="slds-m-left--medium slds-grid slds-grid_vertical-align-center slds-grid--align-spread">
+                        <div class="selectedObject">
+                            Choosen Objects to use Chat Window &nbsp;
+                            <lightning-helptext 
+                                content="Selected objects with specified Phone and Name field to enable WhatsApp Chat Window Component and managing WhatsApp messages for each object."
+                            ></lightning-helptext>
+                        </div>
+                        <div class="slds-m-around_medium slds-text-align--center">
+                            <lightning-button label="Edit Configuration" onclick={handleEditChatConfig} variant="brand"></lightning-button>
+                        </div>
+                    </div>
+                    <div class="slds-p-around--medium datatable">
+                        <table class="slds-table table-container">
+                            <thead>
+                                <tr class="tablerow">
+                                    <th class="tableHead" scope="col">
+                                        <div class="slds-truncate">Objects</div>
+                                    </th>
+                                    <th class="tableHead" scope="col">
+                                        <div class="slds-truncate">Name Field</div>
+                                    </th>
+                                    <th class="tableHead" scope="col">
+                                        <div class="slds-truncate">Phone Field</div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={chatWindowRows} for:item="row" for:index="index">
+                                    <tr key={row.id} class="slds-table_bordered tablerow">
+                                        <!-- Object Selection -->
+                                        <td class="tableData alignCenter">
+                                            {row.selectedObject}
+                                        </td>
+                                        <!-- Name Field Selection -->
+                                        <td class="tableData alignCenter">
+                                            {row.selectedNameField}
+                                        </td>
+                                        <!-- Phone Field Selection -->
+                                        <td class="tableData alignCenter">
+                                            {row.selectedPhoneField}
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </template>
+                <template if:true={isChatWindowConfigEdit}>
+                    <div class="slds-m-left--medium slds-grid slds-grid_vertical-align-center slds-grid--align-spread">
+                        <div class="selectedObject">
+                            Choose Objects to use Chat Window &nbsp;
+                            <lightning-helptext 
+                                content="Select the objects to enable WhatsApp Chat Window Component. Specify the Phone field and Name field to be used for managing WhatsApp messages for each object."
+                            ></lightning-helptext>
+                        </div>
+                        <div class="slds-m-around_medium slds-text-align--center">
+                            <lightning-button label="Add Row" variant="brand" class="slds-m-left_small" onclick={handleAddRow}></lightning-button>
+                        </div>
+                    </div>
+                    <div class="slds-p-around--medium datatable">
+                        <table class="slds-table table-container">
+                            <thead>
+                                <tr class="tablerow">
+                                    <th class="tableHead" scope="col">
+                                        <div class="slds-truncate">Objects</div>
+                                    </th>
+                                    <th class="tableHead" scope="col">
+                                        <div class="slds-truncate">Name Field</div>
+                                    </th>
+                                    <th class="tableHead" scope="col">
+                                        <div class="slds-truncate">Phone Field</div>
+                                    </th>
+                                    <th class="tableHead" scope="col">
+                                        <div class="slds-truncate">Actions</div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={chatWindowRows} for:item="row" for:index="index">
+                                    <tr key={row.id} class="slds-table_bordered tablerow">
+                                        <!-- Object Selection -->
+                                        <td class="tableData">
+                                            <lightning-combobox variant="label-hidden" data-row-id={row.id} value={row.selectedObject} options={row.objectOptions} onchange={handleObjectChangeForChat} placeholder="Select Object"></lightning-combobox>
+                                        </td>
+                                        <!-- Name Field Selection -->
+                                        <td class="tableData">
+                                            <lightning-combobox variant="label-hidden" data-row-id={row.id} value={row.selectedNameField} options={row.nameFieldOptions} onchange={handleNameFieldChange} placeholder="Select Name Field" disabled={row.isNameFieldDisabled}></lightning-combobox>
+                                        </td>
+                                        <!-- Phone Field Selection -->
+                                        <td class="tableData">
+                                            <lightning-combobox variant="label-hidden" data-row-id={row.id} value={row.selectedPhoneField} options={row.phoneFieldOptions} onchange={handlePhoneFieldChange} placeholder="Select Phone Field" disabled={row.isPhoneFieldDisabled}></lightning-combobox>
+                                        </td>
+                                        <!-- Actions (Edit, Remove) -->
+                                        <td class="tableData alignCenter">
+                                            <lightning-button-icon icon-name="utility:delete" alternative-text="Remove" onclick={handleRemoveRow} data-row-id={row.id}></lightning-button-icon>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+
+                        <div class="slds-m-top_medium slds-text-align_center">
+                            <lightning-button variant="brand-outline" onclick={handleCancel} label="Cancel"></lightning-button>
+                            <lightning-button label="Save Configuration" variant="brand" onclick={handleSaveChatWindowConfig} class="slds-m-left_small"></lightning-button>
+                        </div>
+                    </div>
+                </template>
+            </lightning-accordion-section>
+        </lightning-accordion>
+    </div>
+
+    <template if:true={showPopup}>
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+            aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container" style="width: 100rem !important;">
+
+                <!-- Close Button -->
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+                    title="Close" onclick={handleCloseOnPopup} style="background-color: white !important;">
+                    <lightning-icon icon-name="utility:close" alternative-text="Close"
+                        size="small"></lightning-icon>
+                </button>
+
+                <div class="slds-modal__content pop-up" id="modal-content-id-1">
+                    <div class="pop-heading">
+                        ⚠️ Warning
+                    </div>
+                    <div class="popUpBody slds-p-around--medium">
+                        <!-- Groups List -->
+                        <div class="box-container">
+                            <p>Phone field mismatch detected for object {selectedObject} between Webhook Configuration and Chat Window Configuration. Please ensure both configurations use the same phone field to avoid sending mismatched phone numbers in the chat window.</p>
+                        </div>
+
+                        <div class="popUpFooter slds-text-align--center">
+                            <lightning-button variant="brand-outline" onclick={handleCloseOnPopup} label="Close" class="slds-m-left_x-small"></lightning-button>
+                            <template if:true={showPopupWBConfig}>
+                                <lightning-button variant="brand" label="Save Anyway" onclick={handleSaveWBConfigPopup} class="slds-m-left_x-small" ></lightning-button>
+                            </template>
+                            <template if:true={showPopupChatConfig}>
+                                <lightning-button variant="brand" label="Save Anyway" onclick={handleSaveChatConfigPopup} class="slds-m-left_x-small" ></lightning-button>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+    </template>
+</template>

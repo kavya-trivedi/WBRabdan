@@ -1,0 +1,350 @@
+.container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: url('/resource/MVWB__wbiTemplateBg');
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.main-configuration-div{
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: center;
+  backdrop-filter: blur(6px);
+  background: #ffffff25;
+}
+
+.configuration-box {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+}
+
+.resources-div{
+  width: 20%;
+  height: 26rem;
+  border-left: 1px solid #b0b0b0;
+  display: flex;
+}
+
+.buttonCSS {
+  border-radius: 6px;
+  width: 100%;
+  height: 12rem;
+  text-decoration: none;
+  color: #fff;
+  position: relative;
+  display: inline-block;
+  -webkit-transition: all 0.3s ease-in-out;
+  -moz-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+  overflow: hidden;   
+  background-color: white;
+}
+.buttonCSS:active {
+  transform: translate(0px, 5px);
+  -webkit-transform: translate(0px, 5px);
+  box-shadow: 0px 1px 0px 0px;
+}
+.buttonCSS-blue {
+  /* box-shadow: inset 0 0 0 1000px rgba(0,0,0,0.15); */
+  text-decoration: none;
+  border: 1px solid #0ca5b5;
+  backdrop-filter: blur(4px);
+}
+.buttonCSS-blue p, .buttonCSS-blue h3 {
+  visibility: hidden;
+  -webkit-transition: all 0.1s ease-in-out;
+  -moz-transition: all 0.1s ease-in-out;
+  transition: all 0.1s ease-in-out;
+  text-align: center;
+  /* text-shadow: 1px 2px 2px rgba(0,0,0,0.1);
+  font-size: 1.75rem;
+  text-decoration: none;
+  margin: 0;
+  padding: 0;
+  color: #00aeff; */
+}
+/* .text-grow:hover p{
+  visibility: visible;
+} */
+.buttonCSS-blue:hover {
+  box-shadow: inset 0 0 0 1000px #d5ebffdd;
+}
+
+.buttonCSS-blue:hover p, .buttonCSS-blue:hover h3 {
+  visibility: visible !important;
+}
+.buttonCSS-bg-userguide {
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-image: url('/resource/MVWB__UserGuideImage');
+}
+.buttonCSS-bg-faqs {
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-image: url('/resource/MVWB__FAQsImages');
+}
+
+.nav-container {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: space-evenly;
+  /* height: calc( 100% - 4.5rem); */
+}
+.p-1 {
+  /* margin-inline: 2rem; */
+  /* background-color: white; */
+  width: calc(100% - 1.5rem);
+}
+
+.disabled-nav-item {
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+.card-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-container h3 {
+  font-size: 20px;
+  line-height: 24px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.card-container p {
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 20px;
+
+  /* &.small {
+    font-size: 14px;
+  } */
+}
+
+.go-corner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  overflow: hidden;
+  top: 0;
+  right: 0;
+  background-color: #0ca5b5;
+  border-radius: 0 4px 0 32px;
+}
+
+.go-arrow {
+  margin-top: -9px;
+  margin-right: -9px;
+  rotate: -45deg;
+  
+}
+
+.card-redirect {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  text-decoration: none;
+  z-index: 0;
+  overflow: hidden;
+
+  &:before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    top: -16px;
+    right: -16px;
+    background: #0ca5b5;
+    height: 36px;
+    width: 36px;
+    border-radius: 36px;
+    transform: scale(1);
+    transform-origin: 50% 50%;
+    transition: transform 0.35s ease-out;
+
+    svg{
+      rotate: -40deg;
+    }
+  }
+
+  &:hover:before {
+    transform: scale(18);
+  }
+}
+
+.card-redirect:hover {
+  p {
+    transition: all 0.3s ease-out;
+    color: rgba(255, 255, 255, 0.8);
+  }
+  h3 {
+    transition: all 0.3s ease-out;
+    color: #ffffff;
+  }
+}
+
+.logo {
+  text-align: center;
+  margin-bottom: 20px;
+  width: 250px;
+}
+
+.field-container {
+  padding-inline: 2rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.field {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.field label {
+  font-weight: bold;
+}
+
+.field input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Modal styles */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+}
+
+.modal-content p {
+  margin-bottom: 10px;
+}
+
+.modal-content a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+
+/* new css */
+* {
+  box-sizing: border-box;
+  font-family: 'Quicksand', sans-serif;
+}
+
+input[type=text],
+select,
+textarea,
+input[type=email] {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+label {
+  padding: 12px 12px 12px 0;
+  display: inline-block;
+}
+
+.slds-button {
+  width: 100%;
+}
+
+.button-container {
+  display: flex;
+  justify-content: space-evenly;
+  gap: 40px;
+}
+
+lightning-button{
+  margin-top: 20px;
+}
+
+.container {
+  border-radius: 5px;
+  background-color: #ededed;
+  padding: 20px;
+}
+
+.col-25 {
+  float: left;
+  width: 25%;
+  margin-top: 6px;
+}
+
+.col-75 {
+  float: left;
+  width: 75%;
+  margin-top: 6px;
+}
+
+.row{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-block: 4px;
+}
+
+.row label{
+  padding: 0;
+}
+
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+@media screen and (max-width: 600px) {
+
+  .col-25,
+  .col-75,
+  input[type=submit] {
+    width: 100%;
+    margin-top: 0;
+  }
+}

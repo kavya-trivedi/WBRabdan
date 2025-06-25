@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Send_Follow_up_Confirmation_To_Agent</name>
+        <label>Send Follow-up Confirmation To Agent</label>
+        <locationX>50</locationX>
+        <locationY>600</locationY>
+        <actionName>SendTemplateInvoker</actionName>
+        <actionType>apex</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>contextId</name>
+            <value>
+                <elementReference>Get_the_Last_Chat.MVWB__WhatsAppMessageId__c</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>jsonData</name>
+            <value>
+                <elementReference>templateToSendToAgent</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>recipientPhone</name>
+            <value>
+                <elementReference>$Record.Owner:User.Phone</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>templateId</name>
+            <value>
+                <elementReference>$Label.lead_follow_up</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>SendTemplateInvoker</nameSegment>
+        <offset>0</offset>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </actionCalls>
+    <actionCalls>
+        <name>Send_Template</name>
+        <label>Send Template</label>
+        <locationX>578</locationX>
+        <locationY>276</locationY>
+        <actionName>SendTemplateInvoker</actionName>
+        <actionType>apex</actionType>
+        <connector>
+            <targetReference>Store_Context_ID</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>jsonData</name>
+            <value>
+                <elementReference>JSONBodyForTemplate</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>recipientPhone</name>
+            <value>
+                <elementReference>$Record.Phone</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>templateId</name>
+            <value>
+                <elementReference>$Label.new_lead_added</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>SendTemplateInvoker</nameSegment>
+        <offset>0</offset>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </actionCalls>
+    <apiVersion>63.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <assignments>
+        <name>Store_Context_ID</name>
+        <label>Store Context ID</label>
+        <locationX>578</locationX>
+        <locationY>384</locationY>
+        <assignmentItems>
+            <assignToReference>ContextId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Send_Template.chat.MVWB__WhatsAppMessageId__c</elementReference>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <decisions>
+        <name>Is_Lead_Not_Answered</name>
+        <label>Is Lead Not Answered</label>
+        <locationX>182</locationX>
+        <locationY>384</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Yes</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Updated_Lead.Status</leftValueReference>
+                <operator>EqualTo</operator>
+            </conditions>
+            <connector>
+                <targetReference>Get_the_Last_Chat</targetReference>
+            </connector>
+            <label>Yes</label>
+        </rules>
+    </decisions>
+    <environments>Default</environments>
+    <interviewLabel>Chat Create Followup check {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Chat Create Followup check</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <name>Get_the_Last_Chat</name>
+        <label>Get the Last Chat</label>
+        <locationX>50</locationX>
+        <locationY>492</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Send_Follow_up_Confirmation_To_Agent</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>null__NotFound</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>Get_Updated_Lead.Phone</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>MVWB__Message_Type__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Template</stringValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>MVWB__Chat__c</object>
+        <sortField>CreatedDate</sortField>
+        <sortOrder>Desc</sortOrder>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <name>Get_Updated_Lead</name>
+        <label>Get Updated Lead</label>
+        <locationX>182</locationX>
+        <locationY>276</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Is_Lead_Not_Answered</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Lead</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Status</queriedFields>
+        <queriedFields>Phone</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <start>
+        <locationX>56</locationX>
+        <locationY>0</locationY>
+        <object>Lead</object>
+        <recordTriggerType>Create</recordTriggerType>
+        <scheduledPaths>
+            <name>Check_After_n_Days</name>
+            <connector>
+                <targetReference>Get_Updated_Lead</targetReference>
+            </connector>
+            <label>Check After n Days</label>
+            <offsetNumber>1</offsetNumber>
+            <offsetUnit>Minutes</offsetUnit>
+            <recordField>CreatedDate</recordField>
+            <timeSource>RecordField</timeSource>
+        </scheduledPaths>
+        <scheduledPaths>
+            <name>Run_Immediately_After_Record_Creation</name>
+            <connector>
+                <targetReference>Send_Template</targetReference>
+            </connector>
+            <label>Run Immediately After Record Creation</label>
+            <offsetNumber>0</offsetNumber>
+            <offsetUnit>Minutes</offsetUnit>
+            <recordField>CreatedDate</recordField>
+            <timeSource>RecordField</timeSource>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>InvalidDraft</status>
+    <textTemplates>
+        <name>JSONBodyForTemplate</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>{
+  &quot;messaging_product&quot;: &quot;whatsapp&quot;,
+  &quot;to&quot;: &quot;{!$Record.Phone}&quot;,
+  &quot;type&quot;: &quot;template&quot;,
+  &quot;template&quot;: {
+    &quot;name&quot;: &quot;new_lead_added&quot;,
+    &quot;language&quot;: {
+      &quot;code&quot;: &quot;en&quot;
+    },
+    &quot;components&quot;: [
+      {
+        &quot;type&quot;: &quot;body&quot;,
+        &quot;parameters&quot;: [
+          {
+            &quot;type&quot;:&quot;text&quot;,
+            &quot;text&quot;:&quot;{!$Record.FirstName}&quot;
+          }
+        ]
+      }
+    ]
+  }
+}</text>
+    </textTemplates>
+    <textTemplates>
+        <name>templateToSendToAgent</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>{
+    &quot;messaging_product&quot;: &quot;whatsapp&quot;,
+    &quot;to&quot;: &quot;{!$Record.Owner:User.Phone}&quot;,
+    &quot;type&quot;: &quot;template&quot;,
+    &quot;template&quot;: {
+        &quot;name&quot;: &quot;lead_follow_up&quot;,
+        &quot;language&quot;: {
+            &quot;code&quot;: &quot;en&quot;
+        },
+        &quot;components&quot;: [
+            {
+                &quot;type&quot;: &quot;header&quot;,
+                &quot;parameters&quot;: [
+                    {
+                        &quot;type&quot;: &quot;text&quot;,
+                        &quot;text&quot;: &quot;{!$Record.FirstName}&quot;
+                    }
+                ]
+            },
+            {
+                &quot;type&quot;: &quot;body&quot;,
+                &quot;parameters&quot;: [
+                    {
+                        &quot;type&quot;: &quot;text&quot;,
+                        &quot;text&quot;: &quot;{!$Record.Owner:User.FirstName}&quot;
+                    },
+                    {
+                        &quot;type&quot;: &quot;text&quot;,
+                        &quot;text&quot;: &quot;{!$Record.FirstName} {!$Record.LastName}&quot;
+                    },
+                    {
+                        &quot;type&quot;: &quot;text&quot;,
+                        &quot;text&quot;: &quot;{!$Record.Id}&quot;
+                    }
+                ]
+            }
+        ]
+    }
+}</text>
+    </textTemplates>
+    <variables>
+        <name>ContextId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <elementReference>Send_Template.chat.MVWB__WhatsAppMessageId__c</elementReference>
+        </value>
+    </variables>
+</Flow>

@@ -1,0 +1,372 @@
+* {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.wrapper {
+    background-color: #ffffff;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    background-image: url('/resource/MVWB__wbiTemplateBg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-radius : 5px;
+    display: flex;
+    flex-direction: column;
+}
+
+.wrapper::-webkit-scrollbar {
+    display: none;
+}
+
+.title {
+    font-size: 24px;
+    font-weight: 600;
+    text-align: center;
+}
+
+/* Search Bar */
+.search-button-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 1rem 1rem 0 1rem;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    background: white;
+    border-radius: 5px;
+    padding: 4px;
+    width: 320px;
+    height: 35px;
+    box-shadow: 0 0px 0px 0 rgba(0, 0, 0, 0.2), 0 1px 8px 0 rgba(0, 0, 0, 0.18);
+}
+
+.search-container input.slds-input {
+    border: none;
+    box-shadow: none;
+    width: 100%;
+    outline: none;
+}
+
+.search-icon {
+    padding: 5px;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Custom Buttons */
+.save-button {
+    display: inline-flex;
+    align-items: center;
+    background-color: #0077b6;
+    color: white;
+    height: 35px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease-in-out;
+}
+
+.custom-button {
+    display: inline-flex;
+    align-items: center;
+    background-color: white;
+    color: rgb(70 164 245);
+    height: 35px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    box-shadow: 0 0px 0px 0 rgba(0, 0, 0, 0.2), 0 1px 8px 0 rgba(0, 0, 0, 0.18);
+    transition: all 0.2s ease-in-out;
+}
+
+.custom-button:hover {
+    background-color: #F5F5F5;
+}
+
+.custom-button:active {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Circle around the icon */
+.icon-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    border: 1.5px solid rgb(70 164 245);
+    margin-right: 8px;
+}
+
+.slds-icon {
+    transform: scale(0.8);
+    fill: rgb(70 164 245);
+}
+
+/* Table */
+.custom-table {
+      border-radius: 0.4rem;
+    overflow: scroll;
+    scrollbar-width: none !important;
+    flex-grow: 1;
+    /* width: 100%;
+    border: none;
+    overflow: hidden;
+    margin-top: -5px;
+    border-radius: 0.4rem;
+    background-color: transparent; */
+    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
+}
+
+.custom-table th {
+    background-color: #0077b6 !important;
+    color: white !important;
+    padding: 15px 20px;
+    text-align: center;
+    font-weight: 600;
+    font-size: medium;
+}
+
+.custom-table th, .custom-table td {
+    padding: 10px;
+    text-align: center;
+    border: none !important;
+}
+
+.custom-table tbody {
+    background-color: transparent;
+    border-color: inherit;
+}
+
+/* .custom-table tbody tr:nth-child(odd) {
+    background-color: rgb(0, 119, 182, 0.1);
+} */
+
+.custom-table tbody tr:nth-child(odd) {
+    background-color: #CAF0F866;
+}
+
+.custom-table tbody tr:nth-child(even) {
+    background-color: white;
+}
+
+.custom-table tbody tr:hover {
+    background-color: #e1eaf5;
+}
+
+.tableData {
+    height: 10%;
+    padding: 10px;
+    font-size: 15px;
+    text-align: center;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.tablebtns {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0rem;
+    max-width: 100%;
+}
+
+/* Action Buttons */
+.action-buttons {
+    background: transparent;
+    border: none;
+    padding: 0%;
+}
+
+.action {
+    width: 27px;
+    cursor: pointer;
+}
+
+/* Modal */
+.slds-modal__container {
+    max-width: 40rem;
+}
+
+.input-field {
+    margin-top: 15px;
+}
+
+.slds-modal__header {
+    background-color: #0077b6;
+    color: white;
+    text-align: center;
+    padding: 1rem;
+}
+
+.slds-modal__content {
+    background-image: url('/resource/MVWB__wbiTemplateBg');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.slds-modal__footer {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    background: none;
+    box-shadow: none;
+    border: none;
+    margin-top: 50px;
+}
+
+/* Backdrop covers the entire component */
+.license-error {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8); /* Dark overlay */
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* z-index: 100000; Ensures it stays on top */
+}
+
+/* Centered popup */
+.popup-container {
+    background: #b71c1c; /* Dark red for warning */
+    color: white;
+    padding: 24px 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    max-width: 400px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Styling for title */
+.popup-content h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+/* Styling for message */
+.popup-content p {
+    font-size: 16px;
+    margin: 0;
+}
+
+.action{
+    width: 27px;
+    color: black;
+    border: 1px solid #dfdddd;
+    /* background: white; */
+    padding: 0.27rem;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.trash{
+    padding: 0.37rem;
+}
+
+.edit{
+
+    padding: 0.2rem;
+}
+
+
+.pagination-container {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    justify-content: center;
+}
+
+.pagination-button {
+    background-color: #ffffff;
+    border: 1px solid #d8d8d8;
+    color: #333;
+    padding: 6px 12px;
+    margin: 0 2px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    border-radius: 0.3rem;
+    font-size: 12px;
+}
+
+.pagination-button svg {
+    fill: black;
+    width: 0.7rem;
+    height: 0.7rem;
+}
+
+.pagination-button:hover {
+    background-color: #f0f0f0;
+}
+
+.pagination-button.active {
+    background-color: #0070d2;
+    color: white;
+    border-color: #0070d2;
+}
+
+.pagination-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pagination-button:first-child,
+.pagination-button:last-child {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.empty-state {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.no-records-message {
+    height: 100%;
+}
+
+.empty-state__content {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.empty-state__content .empty-state__icon {
+    width: 25%;
+    height: 100%;
+}
+
+.empty-state__content .empty-state__message {
+    color: #3a9bea;
+    font-size: 25px;
+    font-weight: 500;
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+}

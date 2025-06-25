@@ -1,0 +1,91 @@
+<template>
+    <div class="slds-theme_default main">
+
+        <div class="texttemp">
+            <p class="templateHeading">Select template category</p>
+        </div>
+        <div class="displayMainContent">
+            <div class="selectCategoryBlock">
+                <div class="slds-box slds-theme_default categoryBlock">
+                    <h1 class='categoryBlockHeader'>Set up your template</h1>
+                    <div class="categoryBlockDesp">
+                        <p>Choose the category that best describes your message template. Then, select the
+                            type of message that you want to send. Learn more about categories.</p>
+                    </div>
+                    <div class="tabs">
+                        <div class="slds-button-group" role="group">
+                            <template for:each={tabOptions} for:item="tab">
+                                <button key={tab.value} onclick={handleTabClick} data-tab={tab.value}
+                                    class={tab.className}>
+                                    {tab.label}
+                                </button>
+                            </template>
+                        </div>
+
+                        <template if:true={activeSection}>
+                            <div class="radio-group radiogroup">
+                                <template for:each={activeSection.options} for:item="option">
+                                    <div key={option.value} class={option.className}>
+                                        <label class="slds-radio radiobtn">
+                                            <input type="radio" name="templateOptions" value={option.value}
+                                                checked={option.checked} onclick={handleRadioChange} />
+                                            <span class="slds-radio_faux"></span>
+                                            <div class="txtwithlabel">
+                                                <p class="slds-form-element__label radiolabel">{option.label}</p>
+                                                <p class="radio-description radiodescription">{option.description}
+                                                </p>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+                    </div>
+
+
+                </div>
+                <div class="slds-box slds-theme_default templateNavigationButton">
+                    <lightning-button variant="brand-outline" onclick={navigateToAllTemplatePage} label="Discard"
+                        class="slds-m-left_x-small"></lightning-button>
+                    <lightning-button variant="brand" label="Next" onclick={handleNextclick}
+                        class="slds-m-left_x-small"></lightning-button>
+                </div>
+            </div>
+            <div class="templatePreview">
+                <div class="slds-box slds-theme_default templatePreviewmain">
+                    <h1>Template Preview</h1>
+                    <div class="templatePreviewBlock">
+                        <div class="slds-box slds-theme_default previewchild chat-bubble">
+                            <template if:true={currentTemplate.image}>
+                                <img class="image" src={currentTemplate.image} alt="Template Preview" />
+                            </template>
+                            <div class="paratext">
+                                <p class="chatBubbleHeyMessage">{currentTemplate.hey}</p>
+                                <template if:true={currentTemplate.code}>
+                                    <p class="chatBubbleCodeMessage">{currentTemplate.code}</p>
+                                </template>
+                                <p class="chatBubbleTime">{currentTemplate.time}</p>
+                            </div>
+                        </div>
+                        <div class="previewButtons">
+                            <template for:each={currentTemplate.buttons} for:item="btn">
+                                <p key={btn.label} class="previewButton1">
+                                    <template if:true={btn.icon}>
+                                        <img height="16px" width="16px" src={btn.icon} alt="Button Icon" /> {btn.label}
+                                    </template>
+                                    <template if:false={btn.icon}>
+                                        {btn.label}
+                                    </template>
+                                </p>
+                            </template>
+                        </div>
+                    </div>
+                    <p class="templatefootertxt1 firsttxt">This template is good for</p>
+                    <p class="templatefootertxt2 secondtxt">{currentTemplate.goodFor}</p>
+                    <p class="templatefootertxt1">Template areas that you can customise</p>
+                    <p class="templatefootertxt2">{currentTemplate.customizable}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
